@@ -97,15 +97,21 @@ export function InlineStepper({
             <div className="flex flex-col gap-3">
               {authError ? (
                 <div className="rounded-xl border border-red-200 bg-red-50 p-3.5 text-xs text-red-700 dark:border-red-900/80 dark:bg-red-950/40 dark:text-red-300">
-                  <p className="font-semibold">Sign in was not completed</p>
-                  <p className="mt-0.5">{authError}</p>
+                  <p className="font-semibold">Sign in could not proceed</p>
+                  <p className="mt-1 leading-relaxed">{authError}</p>
                 </div>
               ) : connected ? (
-                <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3.5 text-xs text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-300">
+                <div className="flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50/70 p-3.5 text-xs text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-300">
                   <p className="font-medium">
                     Ready to send as{" "}
                     <span className="font-mono font-semibold">{mailbox ?? "your account"}</span>
                   </p>
+                  <Link
+                    href="/api/auth/disconnect"
+                    className="text-xs text-zinc-500 hover:text-red-600 dark:text-zinc-400 dark:hover:text-red-400 underline transition-colors"
+                  >
+                    Disconnect
+                  </Link>
                 </div>
               ) : null}
 
@@ -127,8 +133,18 @@ export function InlineStepper({
                     <rect width="20" height="16" x="2" y="4" rx="2" />
                     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                   </svg>
-                  {connected ? "Reconnect Account" : "Connect Outlook"}
+                  {connected ? "Reconnect Outlook" : "Connect Outlook"}
                 </Link>
+
+                {!connected && (
+                  <Link
+                    href="/api/auth/demo"
+                    className="flex h-11 items-center justify-center rounded-lg border border-dashed border-zinc-300 px-4 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
+                    title="Connect a simulated Outlook mailbox for local testing"
+                  >
+                    Use Demo Account
+                  </Link>
+                )}
 
                 <button
                   type="button"
