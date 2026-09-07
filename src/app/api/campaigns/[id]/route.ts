@@ -124,3 +124,54 @@ export async function PUT(
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+    const tenantContext = await getCurrentTenant();
+    if (!tenantContext) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const campaign = await prisma.campaign.findFirst({
+      where: { id, tenantId: tenantContext.tenantId },
+      include: { sequence: true },
+    });
+
+    if (!campaign) {
+      return NextResponse.json({ error: "Campaign not found" }, { status: 404 });
+    }
+
+    // Cascade delete enrollments, steps, sequence, and campaign inside transaction
+    await prisma.$transaction(async (tx) => {
+      // 1. Delete all enrollments for this campaign
+      await tx.sequenceEnrollment.deleteMany({
+        where: { campaignId: id },
+      });
+
+      // 2. If a sequence exists, delete its steps and the sequence itself
+      if (campaign.sequence) {
+        await tx.sequenceStep.deleteMany({
+          where: { sequenceId: campaign.sequence.id },
+        });
+
+        await tx.sequence.delete({
+          where: { id: campaign.sequence.id },
+        });
+      }
+
+      // 3. Delete the campaign
+      await tx.campaign.delete({
+        where: { id },
+      });
+    });
+
+    return NextResponse.json({ success: true, deletedId: id });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Failed to delete campaign";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}

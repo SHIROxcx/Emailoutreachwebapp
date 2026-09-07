@@ -23,19 +23,7 @@ export function renderTemplate(
     return opts[Math.floor(Math.random() * opts.length)] || "";
   });
 
-  // 2. Resolve Standard Spintax: {opt1 | opt2 | ...}
-  // Make sure we only match brackets that contain a pipe delimiter
-  output = output.replace(/\{([^{}\n]+)\}/g, (match, content) => {
-    if (!content.includes("|")) return match;
-    const opts = content
-      .split("|")
-      .map((s: string) => s.trim())
-      .filter(Boolean);
-    if (opts.length === 0) return "";
-    return opts[Math.floor(Math.random() * opts.length)] || "";
-  });
-
-  // 3. Resolve Merge Tags: {{key}} or {{key | fallback}}
+  // 2. Resolve Merge Tags: {{key}} or {{key | fallback}}
   output = output.replace(/\{\{([a-zA-Z0-9_]+)(?:\s*\|\s*([^}]+))?\}\}/g, (match, key, fallback) => {
     // Avoid re-matching RANDOM if any escaped
     if (key.toUpperCase() === "RANDOM") return match;
@@ -45,6 +33,18 @@ export function renderTemplate(
       return val.trim();
     }
     return fallback ? fallback.trim() : "";
+  });
+
+  // 3. Resolve Standard Spintax: {opt1 | opt2 | ...}
+  // Make sure we only match brackets that contain a pipe delimiter and are not double braces
+  output = output.replace(/(?<!\{)\{([^{}\n]+)\}(?!\})/g, (match, content) => {
+    if (!content.includes("|")) return match;
+    const opts = content
+      .split("|")
+      .map((s: string) => s.trim())
+      .filter(Boolean);
+    if (opts.length === 0) return "";
+    return opts[Math.floor(Math.random() * opts.length)] || "";
   });
 
   return output;

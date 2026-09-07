@@ -3,13 +3,20 @@ import { prisma } from "@/lib/prisma";
 import { decryptSecret, encryptSecret } from "@/lib/crypto";
 import { sendMail } from "@/lib/graph";
 import { GRAPH_SCOPES, msalClient } from "@/lib/msal";
+import { renderTemplate } from "@/lib/template-engine";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { toEmail, subject, bodyText } = body;
+    const {
+      toEmail,
+      subject,
+      bodyText,
+      mergeVariables,
+      simulationScenario,
+    } = body;
 
     if (!toEmail || typeof toEmail !== "string" || !toEmail.includes("@")) {
       return NextResponse.json(
@@ -34,6 +41,96 @@ export async function POST(request: NextRequest) {
           error: `Daily sending limit reached (${DAILY_LIMIT}/${DAILY_LIMIT}). Wait until midnight UTC for reset to protect your sender score.`,
         },
         { status: 429 },
+      );
+    }
+
+    // Resolve template variables and spintax for test preview
+    const vars: Record<string, string | undefined> = {
+      email: toEmail,
+      firstName: mergeVariables?.firstName || undefined,
+      lastName: mergeVariables?.lastName || undefined,
+      company: mergeVariables?.company || undefined,
+      ...mergeVariables,
+    };
+
+    const resolvedSubject = renderTemplate(
+      subject || "Test Email from Outreach Scheduler",
+      vars,
+    );
+    const resolvedBody = renderTemplate(
+      bodyText || "Hello! This test confirms that your Outlook sending pipeline is working properly via Microsoft Graph.",
+      vars,
+    );
+
+    // Test Parameter Scenario: Simulate Throttling (HTTP 429)
+    if (simulationScenario === "rate_limit_429") {
+      const failedLog = await prisma.sendLog.create({
+        data: {
+          recipientEmail: toEmail,
+          subject: resolvedSubject,
+          bodyPreview: resolvedBody,
+          campaignName: null,
+          isTest: true,
+          enrollmentId: null,
+          stepId: null,
+          graphMessageId: `sim_429_${Date.now()}`,
+          status: "failed",
+          errorMessage: "Microsoft Graph HTTP 429: Rate limit quota exceeded (simulated test scenario).",
+        },
+      });
+
+      return NextResponse.json(
+        {
+          error: "Simulated Microsoft Graph HTTP 429: Sending rate limit exceeded. Retry queued with exponential backoff.",
+          log: {
+            id: failedLog.id,
+            recipientEmail: failedLog.recipientEmail,
+            subject: failedLog.subject,
+            bodyPreview: failedLog.bodyPreview,
+            campaignName: failedLog.campaignName,
+            isTest: failedLog.isTest,
+            sentAt: failedLog.sentAt.toISOString(),
+            graphMessageId: failedLog.graphMessageId,
+            status: failedLog.status,
+          },
+        },
+        { status: 429 },
+      );
+    }
+
+    // Test Parameter Scenario: Simulate Server Error (HTTP 500)
+    if (simulationScenario === "server_error_500") {
+      const failedLog = await prisma.sendLog.create({
+        data: {
+          recipientEmail: toEmail,
+          subject: resolvedSubject,
+          bodyPreview: resolvedBody,
+          campaignName: null,
+          isTest: true,
+          enrollmentId: null,
+          stepId: null,
+          graphMessageId: `sim_500_${Date.now()}`,
+          status: "failed",
+          errorMessage: "Microsoft Graph HTTP 500: Internal server error (simulated test scenario).",
+        },
+      });
+
+      return NextResponse.json(
+        {
+          error: "Simulated Microsoft Graph HTTP 500: Mailbox API internal failure.",
+          log: {
+            id: failedLog.id,
+            recipientEmail: failedLog.recipientEmail,
+            subject: failedLog.subject,
+            bodyPreview: failedLog.bodyPreview,
+            campaignName: failedLog.campaignName,
+            isTest: failedLog.isTest,
+            sentAt: failedLog.sentAt.toISOString(),
+            graphMessageId: failedLog.graphMessageId,
+            status: failedLog.status,
+          },
+        },
+        { status: 500 },
       );
     }
 
@@ -78,8 +175,8 @@ export async function POST(request: NextRequest) {
 
       await sendMail(accessToken, {
         toEmail,
-        subject: subject || "Test Email from Outreach Scheduler",
-        bodyText: bodyText || "Hello! This is a test message confirming your Outlook connection works.",
+        subject: resolvedSubject,
+        bodyText: resolvedBody,
       });
 
       messageId = `graph_${Date.now()}`;
@@ -97,8 +194,8 @@ export async function POST(request: NextRequest) {
     const sendLog = await prisma.sendLog.create({
       data: {
         recipientEmail: toEmail,
-        subject: subject || "Test Email from Outreach Scheduler",
-        bodyPreview: bodyText || "Hello! This is a test message confirming your Outlook connection works.",
+        subject: resolvedSubject,
+        bodyPreview: resolvedBody,
         campaignName: null,
         isTest: true,
         enrollmentId: null,

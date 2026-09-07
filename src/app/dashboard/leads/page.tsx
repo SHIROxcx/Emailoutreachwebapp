@@ -13,11 +13,22 @@ export default async function LeadsPage() {
     redirect("/");
   }
 
-  const rawLeads = await prisma.lead.findMany({
-    where: { tenantId: tenantContext.tenantId },
-    orderBy: { createdAt: "desc" },
-    take: 200,
-  }).catch(() => []);
+  const [rawLeads, campaigns] = await Promise.all([
+    prisma.lead
+      .findMany({
+        where: { tenantId: tenantContext.tenantId },
+        orderBy: { createdAt: "desc" },
+        take: 200,
+      })
+      .catch(() => []),
+    prisma.campaign
+      .findMany({
+        where: { tenantId: tenantContext.tenantId },
+        select: { id: true, name: true, status: true },
+        orderBy: { name: "asc" },
+      })
+      .catch(() => []),
+  ]);
 
   const leads: LeadItem[] = rawLeads.map((l) => ({
     id: l.id,
@@ -34,7 +45,11 @@ export default async function LeadsPage() {
     <div className="min-h-screen bg-zinc-50 dark:bg-black">
       <DashboardNav mailboxEmail={tenantContext.mailboxEmail} />
       <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <LeadsTable initialLeads={leads} />
+        <LeadsTable
+          initialLeads={leads}
+          campaigns={campaigns}
+          mailboxEmail={tenantContext.mailboxEmail}
+        />
       </main>
     </div>
   );

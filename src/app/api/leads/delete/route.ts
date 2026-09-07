@@ -12,36 +12,50 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { leadId, batchId } = body;
+    const { leadId, leadIds, batchId } = body;
 
-    if (!leadId && !batchId) {
+    if (!leadId && (!Array.isArray(leadIds) || leadIds.length === 0) && !batchId) {
       return NextResponse.json(
-        { error: "Provide either leadId or batchId to delete." },
+        { error: "Provide leadId, leadIds array, or batchId to delete." },
         { status: 400 },
       );
     }
 
+    const idsToDelete: string[] = [];
     if (leadId) {
-      const deleted = await prisma.lead.deleteMany({
+      idsToDelete.push(leadId);
+    } else if (Array.isArray(leadIds)) {
+      idsToDelete.push(...leadIds);
+    } else if (batchId) {
+      const batchLeads = await prisma.lead.findMany({
+        where: { importBatchId: batchId, tenantId: tenantContext.tenantId },
+        select: { id: true },
+      });
+      idsToDelete.push(...batchLeads.map((l) => l.id));
+    }
+
+    if (idsToDelete.length === 0) {
+      return NextResponse.json({ success: true, count: 0 });
+    }
+
+    const result = await prisma.$transaction(async (tx) => {
+      // 1. Delete sequence enrollments for these leads first
+      await tx.sequenceEnrollment.deleteMany({
+        where: { leadId: { in: idsToDelete } },
+      });
+
+      // 2. Delete the leads
+      const deleted = await tx.lead.deleteMany({
         where: {
-          id: leadId,
+          id: { in: idsToDelete },
           tenantId: tenantContext.tenantId,
         },
       });
-      return NextResponse.json({ success: true, count: deleted.count });
-    }
 
-    if (batchId) {
-      const deleted = await prisma.lead.deleteMany({
-        where: {
-          importBatchId: batchId,
-          tenantId: tenantContext.tenantId,
-        },
-      });
-      return NextResponse.json({ success: true, count: deleted.count });
-    }
+      return deleted.count;
+    });
 
-    return NextResponse.json({ success: false }, { status: 400 });
+    return NextResponse.json({ success: true, count: result });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to delete";
     return NextResponse.json({ error: message }, { status: 500 });

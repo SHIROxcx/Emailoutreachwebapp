@@ -63,6 +63,28 @@ export function CampaignsClientList({ initialCampaigns }: CampaignsClientListPro
     }
   };
 
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDeleteCampaign = async (campaignId: string) => {
+    if (!confirm("Are you sure you want to delete this campaign? All sequence steps and enrollments will be removed.")) {
+      return;
+    }
+
+    setDeletingId(campaignId);
+    try {
+      const res = await fetch(`/api/campaigns/${campaignId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
+      }
+    } catch {
+      // Error
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {/* Header */}
@@ -217,6 +239,14 @@ export function CampaignsClientList({ initialCampaigns }: CampaignsClientListPro
                       >
                         Edit Sequence →
                       </Link>
+                      <button
+                        type="button"
+                        disabled={deletingId === c.id}
+                        onClick={() => handleDeleteCampaign(c.id)}
+                        className="text-xs text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}

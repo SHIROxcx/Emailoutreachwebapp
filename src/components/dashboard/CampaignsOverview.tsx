@@ -52,6 +52,28 @@ export function CampaignsOverview({
     }
   };
 
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDeleteCampaign = async (campaignId: string) => {
+    if (!confirm("Are you sure you want to delete this campaign? All sequence steps and enrollments will be permanently removed.")) {
+      return;
+    }
+
+    setDeletingId(campaignId);
+    try {
+      const res = await fetch(`/api/campaigns/${campaignId}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setCampaigns((prev) => prev.filter((c) => c.id !== campaignId));
+      }
+    } catch {
+      // Retain state on error
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       {/* 3 Metric Summary Counters */}
@@ -185,14 +207,28 @@ export function CampaignsOverview({
                     </td>
                     <td className="py-3.5 font-mono">{c.enrolledCount}</td>
                     <td className="py-3.5 font-mono">{c.sentCount}</td>
-                    <td className="py-3.5 text-right">
+                    <td className="py-3.5 text-right space-x-3">
                       <button
                         type="button"
                         disabled={togglingId === c.id}
                         onClick={() => handleToggleStatus(c.id)}
-                        className="text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                        className="text-xs font-medium text-zinc-500 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
                       >
                         {c.status === "active" ? "Pause" : "Resume"}
+                      </button>
+                      <Link
+                        href={`/dashboard/campaigns/${c.id}`}
+                        className="text-xs font-medium text-zinc-900 hover:underline dark:text-zinc-100"
+                      >
+                        Edit →
+                      </Link>
+                      <button
+                        type="button"
+                        disabled={deletingId === c.id}
+                        onClick={() => handleDeleteCampaign(c.id)}
+                        className="text-xs text-zinc-400 hover:text-red-600 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                      >
+                        Delete
                       </button>
                     </td>
                   </tr>

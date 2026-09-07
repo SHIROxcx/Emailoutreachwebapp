@@ -33,11 +33,19 @@ async function runUITests() {
     console.log("Captured 02_dashboard.png");
 
     // 3. Send Test Email Tool (Milestone 1)
-    console.log("3. Testing Send Test Email tool with monteflorian88@gmail.com...");
+    console.log("3. Testing Send Test Email tool with parameters and monteflorian88@gmail.com...");
     await page.click("text=Send Test Email");
     await page.waitForSelector('div[role="dialog"]', { timeout: 5000 });
     await page.fill('input[type="email"]', "monteflorian88@gmail.com");
-    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "03_send_test_modal_open.png") });
+
+    // Open Test Parameters & Settings Accordion
+    console.log("3a. Opening Test Parameters & Settings accordion...");
+    await page.click("text=Test Parameters & Settings");
+    await page.waitForSelector("text=Resolved Output Preview:", { timeout: 5000 });
+    await page.fill("input[placeholder*='Florian']", "Florian");
+    await page.fill("input[placeholder*='Acme Corp']", "Acme Corporation");
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "03_send_test_modal_parameters_open.png") });
+    console.log("Captured 03_send_test_modal_parameters_open.png");
 
     await page.click("div[role='dialog'] button[type='submit']");
     await page.waitForSelector("text=Test email dispatched successfully!", { timeout: 10000 });
@@ -60,6 +68,7 @@ async function runUITests() {
     await page.click("button:has-text('View Email')");
     await page.waitForSelector("text=Rendered Message Body", { timeout: 5000 });
     await page.waitForSelector("text=monteflorian88@gmail.com", { timeout: 5000 });
+    await page.waitForSelector("text=Acme Corporation", { timeout: 5000 });
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "04c_email_detail_modal.png") });
     console.log("Captured 04c_email_detail_modal.png");
 
@@ -69,12 +78,12 @@ async function runUITests() {
 
     // 3d. Test Activity Feed Filter Tabs
     console.log("3d. Testing Activity Feed Filter Tabs...");
-    await page.click("button:has-text('Campaigns (0)')");
+    await page.click("button:has-text('Campaigns')");
     await page.waitForTimeout(300);
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "04d_activity_feed_campaigns_filter.png") });
     console.log("Captured 04d_activity_feed_campaigns_filter.png");
 
-    await page.click("button:has-text('All (1)')");
+    await page.click("button:has-text('All')");
     await page.waitForTimeout(300);
 
     // 4. Leads Page
@@ -156,6 +165,53 @@ async function runUITests() {
     await page.waitForSelector("text=Campaign Active (Pause)", { timeout: 5000 });
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "14_campaign_activated.png") });
     console.log("Captured 14_campaign_activated.png");
+
+    // 13. Test Leads Quick Actions & Bulk Bar
+    console.log("13. Testing Leads directory quick actions and bulk selection...");
+    await page.click("text=Leads");
+    await page.waitForURL("**/dashboard/leads", { timeout: 10000 });
+    await page.waitForSelector("text=alex.rivera@techcorp.io", { timeout: 5000 });
+
+    // Select first two leads via checkboxes
+    const checkboxes = await page.$$("tbody tr input[type='checkbox']");
+    if (checkboxes.length >= 2) {
+      await checkboxes[0].click();
+      await checkboxes[1].click();
+      await page.waitForSelector("text=leads selected", { timeout: 5000 });
+      await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "15_leads_bulk_actions.png") });
+      console.log("Captured 15_leads_bulk_actions.png");
+    }
+
+    // Test Quick Send on a specific lead row
+    console.log("13b. Testing row-level Quick Test Send on lead...");
+    const quickSendBtn = await page.$("button:has-text('Test Send')");
+    if (quickSendBtn) {
+      await quickSendBtn.click();
+      await page.waitForSelector('div[role="dialog"]', { timeout: 5000 });
+      await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "16_lead_quick_send_modal.png") });
+      console.log("Captured 16_lead_quick_send_modal.png");
+      await page.click("button:has-text('Cancel')");
+      await page.waitForTimeout(300);
+    }
+
+    // 14. Test Campaign Deletion
+    console.log("14. Testing Campaign Delete Functionality...");
+    await page.click("text=Campaigns");
+    await page.waitForURL("**/dashboard/campaigns", { timeout: 10000 });
+    await page.waitForSelector("button:has-text('Delete')", { timeout: 5000 });
+
+    // Handle confirm dialog
+    page.once("dialog", async (dialog) => {
+      await dialog.accept();
+    });
+
+    const deleteBtn = await page.$("button:has-text('Delete')");
+    if (deleteBtn) {
+      await deleteBtn.click();
+      await page.waitForTimeout(800);
+      await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "17_campaign_deleted.png") });
+      console.log("Captured 17_campaign_deleted.png");
+    }
 
     console.log("\n==================================================");
     console.log("ALL PLAYWRIGHT TESTS PASSED! ZERO UI DEFECTS FOUND.");

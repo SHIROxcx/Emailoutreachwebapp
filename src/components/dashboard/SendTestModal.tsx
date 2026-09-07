@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { SendLogItem } from "./EmailDetailModal";
+import { renderTemplate } from "@/lib/template-engine";
 
 interface SendTestModalProps {
   isOpen: boolean;
   onClose: () => void;
   senderEmail: string;
+  initialRecipient?: string;
+  initialFirstName?: string;
+  initialCompany?: string;
   onSendSuccess: (newCount: number, newLog?: SendLogItem) => void;
 }
 
@@ -14,13 +18,27 @@ export function SendTestModal({
   isOpen,
   onClose,
   senderEmail,
+  initialRecipient,
+  initialFirstName,
+  initialCompany,
   onSendSuccess,
 }: SendTestModalProps) {
-  const [toEmail, setToEmail] = useState("monteflorian88@gmail.com");
-  const [subject, setSubject] = useState("Test Email from Outreach Scheduler");
-  const [bodyText, setBodyText] = useState(
-    "Hello! This test confirms that your Outlook sending pipeline is working properly via Microsoft Graph.",
+  const [toEmail, setToEmail] = useState(
+    initialRecipient || "monteflorian88@gmail.com",
   );
+  const [subject, setSubject] = useState("{Quick question|Hello} {{firstName | there}}");
+  const [bodyText, setBodyText] = useState(
+    "Hi {{firstName | there}},\n\nThis test message confirms your Outlook sending pipeline is properly active for {{company | your organization}} via Microsoft Graph.\n\nBest regards,\nOutreach Scheduler Team",
+  );
+
+  // Test Parameter Settings
+  const [showSettings, setShowSettings] = useState(false);
+  const [firstName, setFirstName] = useState(initialFirstName || "Florian");
+  const [company, setCompany] = useState(initialCompany || "Acme Corp");
+  const [simulationScenario, setSimulationScenario] = useState<
+    "normal" | "rate_limit_429" | "server_error_500"
+  >("normal");
+
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successResult, setSuccessResult] = useState<{
@@ -28,12 +46,18 @@ export function SendTestModal({
     isDemo: boolean;
   } | null>(null);
 
-  // Sync recipient if toEmail is empty
+  // Sync recipient and parameters when modal opens with new initial values
   useEffect(() => {
-    if (!toEmail) {
-      setToEmail("monteflorian88@gmail.com");
+    if (initialRecipient) {
+      setToEmail(initialRecipient);
     }
-  }, [toEmail]);
+    if (initialFirstName) {
+      setFirstName(initialFirstName);
+    }
+    if (initialCompany) {
+      setCompany(initialCompany);
+    }
+  }, [initialRecipient, initialFirstName, initialCompany]);
 
   // Handle ESC key to close
   const handleKeyDown = useCallback(
@@ -52,7 +76,24 @@ export function SendTestModal({
     }
   }, [isOpen, handleKeyDown]);
 
+  // Live preview of resolved parameters
+  const preview = useMemo(() => {
+    const vars = {
+      email: toEmail,
+      firstName: firstName.trim() || undefined,
+      company: company.trim() || undefined,
+    };
+    return {
+      subject: renderTemplate(subject, vars),
+      body: renderTemplate(bodyText, vars),
+    };
+  }, [subject, bodyText, toEmail, firstName, company]);
+
   if (!isOpen) return null;
+
+  const handleInsertTag = (tag: string) => {
+    setBodyText((prev) => `${prev} ${tag}`);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,12 +105,24 @@ export function SendTestModal({
       const res = await fetch("/api/mail/send-test", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ toEmail, subject, bodyText }),
+        body: JSON.stringify({
+          toEmail,
+          subject,
+          bodyText,
+          mergeVariables: {
+            firstName: firstName.trim(),
+            company: company.trim(),
+          },
+          simulationScenario,
+        }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.log) {
+          onSendSuccess(data.dailySendCount ?? 0, data.log);
+        }
         throw new Error(data.error || "Failed to send email");
       }
 
@@ -95,9 +148,9 @@ export function SendTestModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/60 backdrop-blur-xs overflow-y-auto"
     >
-      <div className="w-full max-w-lg rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="w-full max-w-lg my-8 rounded-2xl border border-zinc-200 bg-white p-6 shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
         <div className="flex items-start justify-between">
           <div>
             <h2
@@ -107,7 +160,7 @@ export function SendTestModal({
               Send a test email
             </h2>
             <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
-              Verify your sending pipeline by delivering a real test message from your connected Outlook mailbox.
+              Verify your pipeline with custom parameters, merge tags, and simulation scenarios.
             </p>
           </div>
 
@@ -164,7 +217,7 @@ export function SendTestModal({
               value={toEmail}
               onChange={(e) => setToEmail(e.target.value)}
               placeholder="recipient@example.com"
-              className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100"
+              className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 font-mono"
             />
           </div>
 
@@ -186,20 +239,152 @@ export function SendTestModal({
           </div>
 
           <div>
-            <label
-              htmlFor="bodyText"
-              className="block text-xs font-medium text-zinc-700 dark:text-zinc-300"
-            >
-              Message body
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label
+                htmlFor="bodyText"
+                className="block text-xs font-medium text-zinc-700 dark:text-zinc-300"
+              >
+                Message body
+              </label>
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => handleInsertTag("{{firstName}}")}
+                  className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-mono text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                >
+                  +&#123;&#123;firstName&#125;&#125;
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleInsertTag("{{company}}")}
+                  className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-mono text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                >
+                  +&#123;&#123;company&#125;&#125;
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleInsertTag("{Option A|Option B}")}
+                  className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] font-mono text-zinc-600 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                >
+                  +&#123;Spintax&#125;
+                </button>
+              </div>
+            </div>
             <textarea
               id="bodyText"
-              rows={3}
+              rows={4}
               required
               value={bodyText}
               onChange={(e) => setBodyText(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 resize-none"
+              className="w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-xs text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-900 focus:outline-none dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100 dark:focus:border-zinc-100 resize-none font-sans leading-relaxed"
             />
+          </div>
+
+          {/* Test Parameters & Settings Accordion */}
+          <div className="rounded-xl border border-zinc-200/80 bg-zinc-50/50 p-3.5 dark:border-zinc-800 dark:bg-zinc-900/30">
+            <button
+              type="button"
+              onClick={() => setShowSettings(!showSettings)}
+              className="flex w-full items-center justify-between text-left text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-zinc-100"
+            >
+              <div className="flex items-center gap-2">
+                <svg
+                  className="h-4 w-4 text-zinc-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
+                  />
+                </svg>
+                <span>Test Parameters & Settings</span>
+                <span className="rounded bg-zinc-200/80 px-1.5 py-0.5 text-[10px] font-mono text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400">
+                  {simulationScenario !== "normal" ? "Simulated Scenario" : "Configured"}
+                </span>
+              </div>
+              <svg
+                className={`h-4 w-4 text-zinc-400 transition-transform ${
+                  showSettings ? "rotate-180" : ""
+                }`}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+
+            {showSettings && (
+              <div className="mt-3.5 pt-3.5 border-t border-zinc-200/60 dark:border-zinc-800/60 space-y-3">
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <label className="block text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
+                      Parameter: &#123;&#123;firstName&#125;&#125;
+                    </label>
+                    <input
+                      type="text"
+                      value={firstName}
+                      onChange={(e) => setFirstName(e.target.value)}
+                      placeholder="e.g. Florian"
+                      className="mt-1 w-full rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-xs text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
+                      Parameter: &#123;&#123;company&#125;&#125;
+                    </label>
+                    <input
+                      type="text"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                      placeholder="e.g. Acme Corp"
+                      className="mt-1 w-full rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-xs text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-medium text-zinc-600 dark:text-zinc-400">
+                    Delivery Simulation Mode
+                  </label>
+                  <select
+                    value={simulationScenario}
+                    onChange={(e) =>
+                      setSimulationScenario(
+                        e.target.value as "normal" | "rate_limit_429" | "server_error_500",
+                      )
+                    }
+                    className="mt-1 w-full rounded-md border border-zinc-200 bg-white px-2.5 py-1.5 text-xs text-zinc-900 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-100"
+                  >
+                    <option value="normal">Normal Dispatch (Active Pipeline)</option>
+                    <option value="rate_limit_429">
+                      Simulate Graph 429 (Rate Limit Quota Exceeded)
+                    </option>
+                    <option value="server_error_500">
+                      Simulate Graph 500 (Mail Server Error)
+                    </option>
+                  </select>
+                </div>
+
+                {/* Live Resolved Preview Box */}
+                <div className="rounded-lg bg-zinc-100/80 p-2.5 dark:bg-zinc-900/80 text-[11px] space-y-1">
+                  <div className="font-semibold text-zinc-700 dark:text-zinc-300">
+                    Resolved Output Preview:
+                  </div>
+                  <div className="text-zinc-900 dark:text-zinc-100 font-medium truncate">
+                    {preview.subject}
+                  </div>
+                  <div className="text-zinc-600 dark:text-zinc-400 whitespace-pre-wrap truncate">
+                    {preview.body.slice(0, 120)}...
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-2">
