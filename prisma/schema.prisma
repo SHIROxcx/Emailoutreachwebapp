@@ -1,0 +1,112 @@
+// Prisma schema — Outlook Outreach Scheduler (MVP)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tenant {
+  id        String      @id @default(cuid())
+  name      String
+  createdAt DateTime    @default(now())
+  users     User[]
+  leads     Lead[]
+  campaigns Campaign[]
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  tenantId           String
+  email              String              @unique
+  createdAt          DateTime            @default(now())
+  tenant             Tenant              @relation(fields: [tenantId], references: [id])
+  mailboxConnections MailboxConnection[]
+}
+
+model MailboxConnection {
+  id                    String   @id @default(cuid())
+  userId                String
+  msAccountEmail        String
+  accessTokenEncrypted  String
+  refreshTokenEncrypted String
+  tokenExpiresAt        DateTime
+  dailySendCount        Int      @default(0)
+  dailySendResetAt      DateTime @default(now())
+  status                String   @default("connected") // connected | expired | revoked
+  user                  User     @relation(fields: [userId], references: [id])
+  campaigns             Campaign[]
+}
+
+model Lead {
+  id            String               @id @default(cuid())
+  tenantId      String
+  email         String
+  firstName     String?
+  lastName      String?
+  company       String?
+  customFields  Json?
+  status        String               @default("active") // active | unsubscribed | bounced
+  importBatchId String?
+  createdAt     DateTime             @default(now())
+  tenant        Tenant               @relation(fields: [tenantId], references: [id])
+  enrollments   SequenceEnrollment[]
+
+  @@unique([tenantId, email]) // DB-level de-dup, protects against concurrent/bulk-import races
+}
+
+model Campaign {
+  id                  String               @id @default(cuid())
+  tenantId            String
+  name                String
+  mailboxConnectionId String
+  status              String               @default("draft") // draft | active | paused | done
+  tenant              Tenant               @relation(fields: [tenantId], references: [id])
+  mailboxConnection   MailboxConnection    @relation(fields: [mailboxConnectionId], references: [id])
+  sequence            Sequence?
+  enrollments         SequenceEnrollment[]
+}
+
+model Sequence {
+  id         String         @id @default(cuid())
+  campaignId String         @unique
+  campaign   Campaign       @relation(fields: [campaignId], references: [id])
+  steps      SequenceStep[]
+}
+
+model SequenceStep {
+  id              String               @id @default(cuid())
+  sequenceId      String
+  stepOrder       Int
+  delayDays       Int // days after previous step (0 for first step)
+  subjectTemplate String
+  bodyTemplate    String
+  sequence        Sequence             @relation(fields: [sequenceId], references: [id])
+}
+
+model SequenceEnrollment {
+  id            String    @id @default(cuid())
+  leadId        String
+  sequenceId    String
+  campaignId    String // direct path for "pause all enrollments for this campaign" and worker's mailbox lookup, instead of going Sequence -> Campaign every time
+  currentStepId String?
+  nextSendAt    DateTime
+  status        String    @default("active") // active | paused | completed | bounced
+  retryCount    Int       @default(0) // how many times the current step's send has been retried
+  nextRetryAt   DateTime? // set when a send fails transiently (e.g. Graph 429/5xx); worker checks this before nextSendAt on retry passes
+  lead          Lead      @relation(fields: [leadId], references: [id])
+  campaign      Campaign  @relation(fields: [campaignId], references: [id])
+}
+
+model SendLog {
+  id             String   @id @default(cuid())
+  enrollmentId   String
+  stepId         String
+  sentAt         DateTime @default(now())
+  graphMessageId String?
+  status         String // sent | failed | retried
+  errorMessage   String?
+}
