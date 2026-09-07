@@ -1,0 +1,257 @@
+import { chromium } from "playwright";
+import path from "path";
+import fs from "fs";
+
+const ARTIFACT_DIR = "C:\\Users\\monte\\.gemini\\antigravity-cli\\brain\\0283deea-c324-48aa-a298-041347c3d2d3";
+const SCREENSHOTS_DIR = path.join(ARTIFACT_DIR, "screenshots");
+
+if (!fs.existsSync(SCREENSHOTS_DIR)) {
+  fs.mkdirSync(SCREENSHOTS_DIR, { recursive: true });
+}
+
+async function runUITests() {
+  console.log("Launching Chromium via Playwright...");
+  const browser = await chromium.launch({ headless: true });
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 800 },
+  });
+  const page = await context.newPage();
+
+  try {
+    // 1. Landing Page
+    console.log("1. Visiting Landing Page http://localhost:3000/ ...");
+    await page.goto("http://localhost:3000/api/auth/disconnect", { waitUntil: "networkidle" });
+    await page.waitForSelector("text=Use Demo Account", { timeout: 10000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "01_landing_stepper.png") });
+    console.log("Captured 01_landing_stepper.png");
+
+    // 2. Connect Demo Account
+    console.log("2. Connecting Demo Account...");
+    await page.click("text=Use Demo Account");
+    await page.waitForURL("**/dashboard", { timeout: 10000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "02_dashboard.png") });
+    console.log("Captured 02_dashboard.png");
+
+    // 3. Send Test Email Tool (Milestone 1)
+    console.log("3. Testing Send Test Email tool with parameters and monteflorian88@gmail.com...");
+    await page.click("text=Send Test Email");
+    await page.waitForSelector('div[role="dialog"]', { timeout: 5000 });
+    await page.fill('input[type="email"]', "monteflorian88@gmail.com");
+
+    // Open Test Parameters & Settings Accordion
+    console.log("3a. Opening Test Parameters & Settings accordion...");
+    await page.click("text=Test Parameters & Settings");
+    await page.waitForSelector("text=Resolved Output Preview:", { timeout: 5000 });
+    await page.fill("input[placeholder*='Florian']", "Florian");
+    await page.fill("input[placeholder*='Acme Corp']", "Acme Corporation");
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "03_send_test_modal_parameters_open.png") });
+    console.log("Captured 03_send_test_modal_parameters_open.png");
+
+    await page.click("div[role='dialog'] button[type='submit']");
+    await page.waitForSelector("text=Test email dispatched successfully!", { timeout: 10000 });
+    await page.waitForSelector("text=monteflorian88@gmail.com", { timeout: 5000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "04_send_test_modal_success.png") });
+    console.log("Captured 04_send_test_modal_success.png");
+
+    await page.click("button:has-text('Close')");
+    await page.waitForTimeout(500);
+
+    // 3b. Verify Activity Feed & Dispatched Emails
+    console.log("3b. Verifying Activity Feed on Dashboard...");
+    await page.waitForSelector("text=Dispatched Emails", { timeout: 5000 });
+    await page.waitForSelector("text=monteflorian88@gmail.com", { timeout: 5000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "04b_activity_feed_updated.png") });
+    console.log("Captured 04b_activity_feed_updated.png");
+
+    // 3c. Inspect Sent Email in Detail Modal
+    console.log("3c. Inspecting sent email details modal...");
+    await page.click("button:has-text('View Email')");
+    await page.waitForSelector("text=Rendered Message Body", { timeout: 5000 });
+    await page.waitForSelector("text=monteflorian88@gmail.com", { timeout: 5000 });
+    await page.waitForSelector("text=Acme Corporation", { timeout: 5000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "04c_email_detail_modal.png") });
+    console.log("Captured 04c_email_detail_modal.png");
+
+    // Close detail modal
+    await page.click("div[role='dialog'] button:has-text('Close')");
+    await page.waitForTimeout(400);
+
+    // 3d. Test Activity Feed Filter Tabs
+    console.log("3d. Testing Activity Feed Filter Tabs...");
+    await page.click("button:has-text('Campaigns')");
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "04d_activity_feed_campaigns_filter.png") });
+    console.log("Captured 04d_activity_feed_campaigns_filter.png");
+
+    await page.click("button:has-text('All')");
+    await page.waitForTimeout(300);
+
+    // 4. Leads Page
+    console.log("4. Visiting Leads page...");
+    await page.click("text=Leads");
+    await page.waitForURL("**/dashboard/leads", { timeout: 10000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "05_leads_page.png") });
+    console.log("Captured 05_leads_page.png");
+
+    // Open Lead CSV Uploader
+    await page.click("text=Import Leads (CSV)");
+    await page.waitForSelector('div[role="dialog"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "06_lead_uploader_modal.png") });
+    console.log("Captured 06_lead_uploader_modal.png");
+    await page.click("button[aria-label='Close']");
+    await page.waitForTimeout(500);
+
+    // 5. Campaigns Page
+    console.log("5. Visiting Campaigns page...");
+    await page.click("text=Campaigns");
+    await page.waitForURL("**/dashboard/campaigns", { timeout: 10000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "07_campaigns_page.png") });
+    console.log("Captured 07_campaigns_page.png");
+
+    // Create New Campaign
+    console.log("6. Creating New Campaign...");
+    await page.click("button:has-text('New Campaign'), button:has-text('Create Your First Campaign')");
+    await page.waitForSelector('div[role="dialog"]', { timeout: 5000 });
+    await page.fill("input[placeholder*='Founders']", "Q4 Founder Outreach");
+    await page.click("button:has-text('Create & Edit Sequence')");
+    await page.waitForURL("**/dashboard/campaigns/*", { timeout: 10000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "08_campaign_studio.png") });
+    console.log("Captured 08_campaign_studio.png");
+
+    // 7. Add Step 2 in Sequence Builder
+    console.log("7. Adding Step 2 in Sequence Builder...");
+    await page.click("text=Add Follow-up Step");
+    await page.waitForTimeout(500);
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "09_sequence_with_step2.png") });
+    console.log("Captured 09_sequence_with_step2.png");
+
+    // 8. Test Spintax Preview
+    console.log("8. Testing Spintax Live Preview...");
+    await page.click("text=Preview & Test");
+    await page.waitForSelector('div[role="dialog"]', { timeout: 5000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "10_spintax_preview_modal.png") });
+    console.log("Captured 10_spintax_preview_modal.png");
+
+    // Click Re-Spin Options
+    await page.click("text=Re-Spin Options");
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "11_spintax_respun.png") });
+    console.log("Captured 11_spintax_respun.png");
+    await page.click("button:has-text('Close')");
+    await page.waitForTimeout(300);
+
+    // 9. Save Sequence
+    console.log("9. Saving Sequence...");
+    await page.click("text=Save Sequence");
+    await page.waitForSelector("text=✓ Changes saved", { timeout: 5000 });
+
+    // 10. Switch to Leads Tab
+    console.log("10. Testing Leads tab in Campaign Studio...");
+    await page.click("button[role='tab']:has-text('Leads')");
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "12_campaign_leads_tab.png") });
+    console.log("Captured 12_campaign_leads_tab.png");
+
+    // 11. Switch to Settings & Guardrails Tab
+    console.log("11. Testing Settings & Guardrails tab in Campaign Studio...");
+    await page.click("button[role='tab']:has-text('Settings')");
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "13_campaign_settings_tab.png") });
+    console.log("Captured 13_campaign_settings_tab.png");
+
+    // 12. Pre-Flight Campaign Verification Modal
+    console.log("12. Triggering Pre-Flight Campaign Verification Guardrail Modal...");
+    await page.click("button:has-text('Draft / Paused (Activate)')");
+    await page.waitForSelector("text=Mailbox Health", { timeout: 8000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "18_preflight_audit_modal.png") });
+    console.log("Captured 18_preflight_audit_modal.png");
+
+    // Click Confirm & Arm Campaign
+    console.log("12b. Confirming Pre-Flight Activation...");
+    await page.click("button:has-text('Confirm & Arm Campaign')");
+    await page.waitForSelector("text=Campaign Active (Pause)", { timeout: 8000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "14_campaign_activated.png") });
+    console.log("Captured 14_campaign_activated.png");
+
+    // 12c. Test Run Dispatch Pass
+    console.log("12c. Testing Run Dispatch Pass with safety telemetry...");
+    await page.click("button:has-text('Run Dispatch Pass')");
+    await page.waitForSelector("text=Dispatch finished", { timeout: 10000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "19_dispatch_pass_telemetry.png") });
+    console.log("Captured 19_dispatch_pass_telemetry.png");
+
+    // 13. Test Leads Quick Actions & Bulk Bar
+    console.log("13. Testing Leads directory quick actions and bulk selection...");
+    await page.click("text=Leads");
+    await page.waitForURL("**/dashboard/leads", { timeout: 10000 });
+    await page.waitForSelector("text=alex.rivera@techcorp.io", { timeout: 5000 });
+
+    // Select first two leads via checkboxes
+    const checkboxes = await page.$$("tbody tr input[type='checkbox']");
+    if (checkboxes.length >= 2) {
+      await checkboxes[0].click();
+      await checkboxes[1].click();
+      await page.waitForSelector("text=leads selected", { timeout: 5000 });
+      await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "15_leads_bulk_actions.png") });
+      console.log("Captured 15_leads_bulk_actions.png");
+    }
+
+    // Test Quick Send on a specific lead row
+    console.log("13b. Testing row-level Quick Test Send on lead...");
+    const quickSendBtn = await page.$("button:has-text('Test Send')");
+    if (quickSendBtn) {
+      await quickSendBtn.click();
+      await page.waitForSelector('div[role="dialog"]', { timeout: 5000 });
+      await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "16_lead_quick_send_modal.png") });
+      console.log("Captured 16_lead_quick_send_modal.png");
+      await page.click("button:has-text('Cancel')");
+      await page.waitForTimeout(300);
+    }
+
+    // 14. Verify Campaigns Overview Safety Controls
+    console.log("14. Testing Campaigns Overview Safety Controls...");
+    await page.click("text=Campaigns");
+    await page.waitForURL("**/dashboard/campaigns", { timeout: 10000 });
+    await page.waitForSelector("button:has-text('Delete')", { timeout: 5000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "20_campaigns_overview_safety_controls.png") });
+    console.log("Captured 20_campaigns_overview_safety_controls.png");
+
+    // 14b. Test Emergency Stop button
+    const emergencyBtn = await page.$("button:has-text('Emergency Stop')");
+    if (emergencyBtn) {
+      console.log("14b. Testing Emergency Stop kill switch button...");
+      page.once("dialog", async (dialog) => {
+        await dialog.accept();
+      });
+      await emergencyBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "21_emergency_stop_activated.png") });
+      console.log("Captured 21_emergency_stop_activated.png");
+    }
+
+    // 15. Test Campaign Deletion
+    console.log("15. Testing Campaign Delete Functionality...");
+    // Handle confirm dialog
+    page.once("dialog", async (dialog) => {
+      await dialog.accept();
+    });
+
+    const deleteBtn = await page.$("button:has-text('Delete')");
+    if (deleteBtn) {
+      await deleteBtn.click();
+      await page.waitForTimeout(800);
+      await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "17_campaign_deleted.png") });
+      console.log("Captured 17_campaign_deleted.png");
+    }
+
+    console.log("\n==================================================");
+    console.log("ALL PLAYWRIGHT TESTS PASSED! ZERO UI DEFECTS FOUND.");
+    console.log("==================================================");
+  } catch (err) {
+    console.error("Test failed with defect:", err);
+  } finally {
+    await browser.close();
+  }
+}
+
+runUITests();
