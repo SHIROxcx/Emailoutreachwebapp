@@ -1,6 +1,7 @@
 export interface OnboardingStepData {
   id: string;
   stepNumber: number;
+  label: string;
   title: string;
   subtitle: string;
   description: string;
@@ -13,6 +14,7 @@ export const ONBOARDING_STEPS: OnboardingStepData[] = [
   {
     id: "connect",
     stepNumber: 1,
+    label: "Connect",
     title: "Connect Your Outlook Account",
     subtitle: "Secure, direct integration via Microsoft Graph",
     description:
@@ -28,6 +30,7 @@ export const ONBOARDING_STEPS: OnboardingStepData[] = [
   {
     id: "upload",
     stepNumber: 2,
+    label: "Leads",
     title: "Import and Map Your Leads",
     subtitle: "Simple CSV upload with smart column mapping",
     description:
@@ -43,6 +46,7 @@ export const ONBOARDING_STEPS: OnboardingStepData[] = [
   {
     id: "sequence",
     stepNumber: 3,
+    label: "Sequence",
     title: "Design Multi-Step Sequences",
     subtitle: "Personalized outreach with intelligent delays",
     description:
@@ -58,6 +62,7 @@ export const ONBOARDING_STEPS: OnboardingStepData[] = [
   {
     id: "send",
     stepNumber: 4,
+    label: "Dispatch",
     title: "Automate, Schedule & Track",
     subtitle: "Safe sending engine respecting Outlook quotas",
     description:
