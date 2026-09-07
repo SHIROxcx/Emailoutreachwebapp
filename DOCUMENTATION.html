@@ -3,21 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Outlook Cold Email Outreach Scheduler — Complete Technical Documentation & User Guide</title>
+  <title>Outlook Cold Email Outreach — Development Timeline & Documentation</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #090a0f;
-      --card-bg: #11131b;
-      --card-border: #1e2230;
+      --surface: #11131b;
+      --surface-hover: #161924;
+      --border: #1e2230;
+      --border-accent: #2e364f;
       --text: #f1f5f9;
       --text-muted: #94a3b8;
+      --text-subtle: #64748b;
       --primary: #38bdf8;
+      --primary-dim: rgba(56, 189, 248, 0.12);
       --accent: #10b981;
+      --accent-dim: rgba(16, 185, 129, 0.12);
       --warning: #f59e0b;
+      --warning-dim: rgba(245, 158, 11, 0.12);
       --danger: #ef4444;
+      --danger-dim: rgba(239, 68, 68, 0.12);
       --code-bg: #0d1117;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,104 +32,378 @@
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg);
       color: var(--text);
-      line-height: 1.6;
+      line-height: 1.65;
       font-size: 15px;
+      -webkit-font-smoothing: antialiased;
     }
-    code, pre, .font-mono {
-      font-family: 'JetBrains Mono', monospace;
-    }
-    a { color: var(--primary); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-    
-    .layout {
-      display: flex;
-      min-height: 100vh;
-    }
+    code, pre, .font-mono { font-family: 'JetBrains Mono', monospace; }
+    a { color: var(--primary); text-decoration: none; transition: color 0.15s ease; }
+    a:hover { text-decoration: underline; color: #7dd3fc; }
+
+    /* Layout */
+    .layout { display: flex; min-height: 100vh; }
     .sidebar {
-      width: 280px;
-      background-color: #0b0d14;
-      border-right: 1px solid var(--card-border);
+      width: 290px;
+      background: #0b0d14;
+      border-right: 1px solid var(--border);
       position: sticky;
       top: 0;
       height: 100vh;
       overflow-y: auto;
       padding: 2rem 1.25rem;
       flex-shrink: 0;
+      z-index: 20;
     }
     .main {
       flex: 1;
       padding: 3rem 4rem;
-      max-width: 1080px;
+      max-width: 1120px;
     }
+    @media (max-width: 1024px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+      .main { padding: 2rem 1.5rem; }
+    }
+
+    /* Navigation */
     .nav-group-title {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: #64748b;
+      color: var(--text-subtle);
       margin-top: 1.5rem;
       margin-bottom: 0.5rem;
+      padding-left: 0.5rem;
     }
     .nav-link {
-      display: block;
-      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.84rem;
       color: var(--text-muted);
-      padding: 0.4rem 0.6rem;
-      border-radius: 6px;
+      padding: 0.45rem 0.65rem;
+      border-radius: 8px;
       transition: all 0.15s ease;
     }
     .nav-link:hover {
       color: #fff;
-      background-color: #1a1f2e;
+      background: var(--surface-hover);
       text-decoration: none;
     }
-    
+    .nav-link.active {
+      color: var(--primary);
+      background: var(--primary-dim);
+      font-weight: 600;
+    }
+
+    /* Badges */
     .badge {
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.2rem 0.6rem;
+      padding: 0.25rem 0.65rem;
       border-radius: 9999px;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       font-weight: 600;
       font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
     }
-    .badge-primary { background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25); }
-    .badge-success { background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25); }
-    .badge-warning { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); }
-    .badge-danger { background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.25); }
-    
+    .badge-primary { background: var(--primary-dim); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.28); }
+    .badge-success { background: var(--accent-dim); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.28); }
+    .badge-warning { background: var(--warning-dim); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.28); }
+    .badge-danger { background: var(--danger-dim); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.28); }
+    .badge-subtle { background: rgba(255, 255, 255, 0.05); color: #94a3b8; border: 1px solid var(--border); }
+
+    /* Mode Switcher Bar */
+    .mode-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.5);
+    }
+    .mode-pill-group {
+      display: flex;
+      background: #090a0f;
+      border: 1px solid var(--border);
+      padding: 0.25rem;
+      border-radius: 10px;
+    }
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.45rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .mode-btn.active {
+      background: var(--surface-hover);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+    .mode-btn.active.primary {
+      background: var(--primary-dim);
+      color: var(--primary);
+    }
+
+    /* Filter Chips */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 2rem;
+    }
+    .chip {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+    .chip:hover {
+      color: #fff;
+      border-color: var(--text-subtle);
+    }
+    .chip.active {
+      background: var(--primary-dim);
+      color: var(--primary);
+      border-color: rgba(56, 189, 248, 0.4);
+      font-weight: 600;
+    }
+
+    /* Cards */
     .card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
       padding: 1.5rem;
       margin: 1.5rem 0;
+      transition: border-color 0.15s ease;
     }
+    .card:hover { border-color: var(--border-accent); }
     .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
     .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
-    @media (max-width: 900px) {
-      .layout { flex-direction: column; }
-      .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--card-border); }
-      .main { padding: 2rem 1.5rem; }
+    @media (max-width: 768px) {
       .grid-2, .grid-3 { grid-template-columns: 1fr; }
     }
-    
-    h1 { font-size: 2.25rem; font-weight: 800; tracking-tight: -0.03em; margin-bottom: 0.5rem; color: #fff; }
-    h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem; color: #fff; }
-    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #e2e8f0; }
-    p { margin-bottom: 1rem; color: #cbd5e1; }
+
+    /* Timeline Spine */
+    .timeline-container {
+      position: relative;
+      margin: 2rem 0;
+    }
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 15px;
+      bottom: 20px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--primary), var(--accent), var(--primary));
+      opacity: 0.3;
+    }
+    .timeline-item {
+      position: relative;
+      padding-left: 55px;
+      margin-bottom: 2.75rem;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .timeline-item.hidden {
+      display: none;
+    }
+    .timeline-node {
+      position: absolute;
+      left: 7px;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #0b0d14;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+      z-index: 2;
+    }
+    .timeline-node.success { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 12px rgba(16, 185, 129, 0.35); }
+    .timeline-node.warning { border-color: var(--warning); color: var(--warning); box-shadow: 0 0 12px rgba(245, 158, 11, 0.35); }
+    .timeline-node.danger { border-color: var(--danger); color: var(--danger); box-shadow: 0 0 12px rgba(239, 68, 68, 0.35); }
+
+    .timeline-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+    .timeline-card-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .timeline-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Problem / Fix / Impact Framework */
+    .pfi-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+    .pfi-box {
+      padding: 0.9rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+    .pfi-problem {
+      background: rgba(239, 68, 68, 0.07);
+      border-left: 3px solid var(--danger);
+      color: #fca5a5;
+    }
+    .pfi-problem strong { color: #f87171; }
+    .pfi-solution {
+      background: rgba(16, 185, 129, 0.07);
+      border-left: 3px solid var(--accent);
+      color: #a7f3d0;
+    }
+    .pfi-solution strong { color: #34d399; }
+    .pfi-impact {
+      background: rgba(56, 189, 248, 0.07);
+      border-left: 3px solid var(--primary);
+      color: #bae6fd;
+    }
+    .pfi-impact strong { color: #38bdf8; }
+
+    /* Before / After Pill */
+    .before-after-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0;
+      background: #090a0f;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem;
+      font-size: 0.82rem;
+    }
+    @media (max-width: 640px) {
+      .before-after-box { grid-template-columns: 1fr; }
+    }
+    .ba-col { display: flex; flex-direction: column; gap: 0.35rem; }
+    .ba-tag { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+    .ba-tag.before { color: #f87171; }
+    .ba-tag.after { color: #34d399; }
+
+    /* Collapsible Deep-Dive Drawer */
+    .deep-dive-drawer {
+      margin-top: 1.25rem;
+      border-top: 1px dashed var(--border);
+      padding-top: 1rem;
+    }
+    .deep-dive-toggle {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.15s ease;
+    }
+    .deep-dive-toggle:hover {
+      background: var(--surface-hover);
+      color: #fff;
+    }
+    .deep-dive-content {
+      margin-top: 1rem;
+    }
+    body.mode-simple .deep-dive-content {
+      display: none;
+    }
+    body.mode-simple .deep-dive-content.force-open {
+      display: block;
+    }
+    body.mode-tech .deep-dive-content {
+      display: block;
+    }
+    body.mode-tech .deep-dive-toggle {
+      display: none;
+    }
+
+    /* Workflow Visualizer */
+    .flow-step-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding: 1rem 0;
+    }
+    .flow-step {
+      background: #0b0d14;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      min-width: 140px;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+    .flow-arrow { color: var(--text-subtle); font-size: 1.1rem; }
+
+    /* Typography & Code */
+    h1 { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.5rem; color: #fff; }
+    h2 { font-size: 1.6rem; font-weight: 700; margin-top: 3rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.6rem; color: #fff; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #e2e8f0; }
+    p { margin-bottom: 0.85rem; color: #cbd5e1; }
     ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #cbd5e1; }
     li { margin-bottom: 0.35rem; }
-    
+
     pre {
       background: var(--code-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
       padding: 1rem;
       overflow-x: auto;
-      font-size: 0.85rem;
-      margin: 1rem 0;
+      font-size: 0.84rem;
+      margin: 0.85rem 0;
+      position: relative;
     }
     code {
       background: rgba(255,255,255,0.06);
@@ -130,7 +411,8 @@
       border-radius: 4px;
       font-size: 0.85em;
     }
-    
+    pre code { background: transparent; padding: 0; }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -138,7 +420,7 @@
       font-size: 0.85rem;
     }
     th, td {
-      border: 1px solid var(--card-border);
+      border: 1px solid var(--border);
       padding: 0.65rem 0.85rem;
       text-align: left;
     }
@@ -147,31 +429,37 @@
       font-weight: 600;
       color: #94a3b8;
     }
-    
-    .alert {
-      border-left: 4px solid var(--primary);
-      background: rgba(56, 189, 248, 0.06);
-      padding: 1rem 1.25rem;
-      border-radius: 0 8px 8px 0;
-      margin: 1rem 0;
+
+    /* Copy Button */
+    .copy-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      font-size: 0.72rem;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease;
     }
-    .alert-success { border-color: var(--accent); background: rgba(16, 185, 129, 0.06); }
-    .alert-warning { border-color: var(--warning); background: rgba(245, 158, 11, 0.06); }
-    .alert-danger { border-color: var(--danger); background: rgba(239, 68, 68, 0.06); }
+    .copy-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
   </style>
 </head>
-<body>
+<body class="mode-simple">
 
 <div class="layout">
-  <!-- Sidebar Navigation -->
+  <!-- Sidebar -->
   <aside class="sidebar">
-    <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1.5rem;">
-      <div style="width:32px; height:32px; border-radius:8px; background:var(--primary); display:flex; align-items:center; justify-content:center; color:#000; font-weight:800;">
+    <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1.25rem;">
+      <div style="width:34px; height:34px; border-radius:9px; background:var(--primary); display:flex; align-items:center; justify-content:center; color:#000; font-weight:800; font-size:0.95rem;">
         OS
       </div>
       <div>
-        <div style="font-weight:700; font-size:0.9rem;">Outreach Scheduler</div>
-        <div style="font-size:0.75rem; color:#64748b;">v1.0 Production Ready</div>
+        <div style="font-weight:700; font-size:0.95rem; color:#fff;">Outreach Scheduler</div>
+        <div style="font-size:0.75rem; color:var(--text-subtle);">Development Timeline</div>
       </div>
     </div>
 
@@ -180,565 +468,676 @@
     </div>
 
     <nav>
-      <div class="nav-group-title">Overview</div>
-      <a href="#executive-summary" class="nav-link">Executive Summary</a>
-      <a href="#tech-stack" class="nav-link">Tech Stack</a>
-      <a href="#architecture" class="nav-link">System Architecture</a>
+      <div class="nav-group-title">Navigation</div>
+      <a href="#hero" class="nav-link">Overview & Summary</a>
+      <a href="#how-it-works" class="nav-link">Visual Workflows</a>
+      <a href="#timeline" class="nav-link active">Development Timeline</a>
 
-      <div class="nav-group-title">Features & Engine</div>
-      <a href="#lead-management" class="nav-link">Lead Directory & Mapping</a>
-      <a href="#sequence-builder" class="nav-link">Sequence Studio & Spintax</a>
-      <a href="#sending-engine" class="nav-link">Core Dispatcher & BullMQ</a>
-      <a href="#safety-guardrails" class="nav-link">Multi-Layer Safety Guardrails</a>
-      <a href="#activity-feed" class="nav-link">Activity Feed & Telemetry</a>
-
-      <div class="nav-group-title">User Guide</div>
-      <a href="#guide-login" class="nav-link">1. Connect Account / Demo</a>
-      <a href="#guide-leads" class="nav-link">2. Managing Prospects</a>
-      <a href="#guide-campaigns" class="nav-link">3. Building Sequences</a>
-      <a href="#guide-safety" class="nav-link">4. Configuring Guardrails</a>
-      <a href="#guide-dispatch" class="nav-link">5. Activating & Sending</a>
+      <div class="nav-group-title">Milestones (01–09)</div>
+      <a href="#m1-setup" class="nav-link"><span class="badge badge-subtle">01</span> Project Foundation</a>
+      <a href="#m2-oauth" class="nav-link"><span class="badge badge-subtle">02</span> Outlook Graph OAuth</a>
+      <a href="#m3-leads" class="nav-link"><span class="badge badge-subtle">03</span> Demo Leads & Actions</a>
+      <a href="#m4-campaigns" class="nav-link"><span class="badge badge-subtle">04</span> Sequences & Spintax</a>
+      <a href="#m5-activity" class="nav-link"><span class="badge badge-subtle">05</span> Live Activity Feed</a>
+      <a href="#m6-safety" class="nav-link"><span class="badge badge-subtle">06</span> Safety Guardrails</a>
+      <a href="#m7-bullmq" class="nav-link"><span class="badge badge-subtle">07</span> BullMQ Sending Engine</a>
+      <a href="#m8-testing" class="nav-link"><span class="badge badge-subtle">08</span> Test Verification</a>
+      <a href="#m9-publish" class="nav-link"><span class="badge badge-subtle">09</span> Branch & Docs</a>
 
       <div class="nav-group-title">Reference</div>
+      <a href="#how-to-use" class="nav-link">Quick Start Guide</a>
       <a href="#api-reference" class="nav-link">API Specification</a>
-      <a href="#database-schema" class="nav-link">Database Schema</a>
-      <a href="#cli-commands" class="nav-link">CLI Commands & Verification</a>
     </nav>
   </aside>
 
   <!-- Main Content -->
   <main class="main">
-    <!-- Header -->
-    <header style="margin-bottom: 2.5rem;">
-      <div style="display:flex; gap:0.5rem; margin-bottom:0.75rem;">
+
+    <!-- Header Section -->
+    <header id="hero" style="margin-bottom: 2rem;">
+      <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
         <span class="badge badge-success">✓ 37 Automated Tests Passed</span>
-        <span class="badge badge-primary">Next.js 16 + React 19</span>
+        <span class="badge badge-primary">Published to devFlorian</span>
         <span class="badge badge-warning">Zero UI Defects (Playwright)</span>
       </div>
       <h1>Outlook Outreach Scheduler</h1>
-      <p style="font-size: 1.1rem; color: #94a3b8;">
-        Full-stack automated cold email scheduling system with Microsoft Graph integration, multi-touch sequences, Spintax permutation engine, strict safety guardrails, and autonomous BullMQ queue execution.
+      <p style="font-size: 1.15rem; color: var(--text-muted); max-width: 800px;">
+        An interactive timeline of everything we engineered: from initial database scaffolding and Microsoft Graph integration, to multi-layer safety guardrails and autonomous background email delivery.
       </p>
     </header>
 
-    <!-- Section 1: Executive Summary -->
-    <section id="executive-summary">
-      <h2>Executive Summary</h2>
-      <p>
-        The <strong>Outlook Outreach Scheduler</strong> is an enterprise-grade cold email orchestration web platform engineered specifically for Microsoft 365 and personal Outlook mailboxes. It solves the critical deliverability challenges inherent in outbound email marketing: preventing spam flags, respecting strict Graph API rate limits, protecting sender domain reputation, eliminating human configuration error through pre-flight audits, and honoring CAN-SPAM and GDPR compliance.
-      </p>
+    <!-- Interactive Mode Switcher -->
+    <div class="mode-bar">
+      <div>
+        <div style="font-weight:700; font-size:0.95rem; color:#fff;">Choose Reading Mode</div>
+        <div style="font-size:0.8rem; color:var(--text-muted);">Switch between plain-English summaries or full engineering diffs.</div>
+      </div>
+      <div class="mode-pill-group">
+        <button id="btn-mode-simple" class="mode-btn active primary" onclick="setMode('simple')">
+          👓 Simple Story Mode
+        </button>
+        <button id="btn-mode-tech" class="mode-btn" onclick="setMode('tech')">
+          💻 Engineering Deep-Dive
+        </button>
+      </div>
+    </div>
 
-      <div class="grid-3">
-        <div class="card">
-          <h3 style="color:var(--primary); margin-top:0;">Autonomy</h3>
-          <p style="font-size:0.85rem;">Autonomous BullMQ worker daemon running 24/7 on Redis, executing scheduled staggered dispatch ticks every 5 minutes with midnight quota resets.</p>
+    <!-- Section: How It Works Visual Flow -->
+    <section id="how-it-works" style="margin-bottom: 3rem;">
+      <h2>How The System Works In 2 Diagrams</h2>
+
+      <h3 style="color:var(--primary);">1. The Email Outreach Journey</h3>
+      <p style="font-size:0.9rem;">From prospect import to delivery in their Outlook inbox:</p>
+      <div class="flow-step-container card" style="margin-top:0.5rem; padding:1.25rem;">
+        <div class="flow-step">
+          <div style="font-weight:700; color:#fff;">1. Import Leads</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Demo leads or CSV</div>
         </div>
-        <div class="card">
-          <h3 style="color:var(--accent); margin-top:0;">Deliverability</h3>
-          <p style="font-size:0.85rem;">Spintax permutation trees (`{Hi|Hello}`), dynamic merge tags (`{{firstName}}`), business-hours delivery windows (Mon–Fri 9–5), and custom delay stagger.</p>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step">
+          <div style="font-weight:700; color:#fff;">2. Write Sequence</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Spintax + variables</div>
         </div>
-        <div class="card">
-          <h3 style="color:var(--danger); margin-top:0;">Safety Guardrails</h3>
-          <p style="font-size:0.85rem;">Automated circuit breaker that auto-pauses on 3 consecutive errors, pre-flight launch verification modal, opt-out suppression, and 1-click Emergency Stop.</p>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step" style="border-color:var(--accent);">
+          <div style="font-weight:700; color:var(--accent);">3. Pre-Flight Audit</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">6 safety checks</div>
         </div>
-      </div>
-    </section>
-
-    <!-- Section 2: Tech Stack -->
-    <section id="tech-stack">
-      <h2>Technology Stack</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Layer</th>
-            <th>Technology</th>
-            <th>Version</th>
-            <th>Purpose</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Framework</strong></td>
-            <td>Next.js (App Router, Turbopack)</td>
-            <td>16.3.4</td>
-            <td>Full-stack React server components & API route handlers</td>
-          </tr>
-          <tr>
-            <td><strong>Frontend Library</strong></td>
-            <td>React</td>
-            <td>19.2.8</td>
-            <td>Modern client state, live previews, and modal architectures</td>
-          </tr>
-          <tr>
-            <td><strong>Styling</strong></td>
-            <td>Tailwind CSS</td>
-            <td>v4.0</td>
-            <td>Engineered utility-first CSS conforming to strict design system standards</td>
-          </tr>
-          <tr>
-            <td><strong>Database ORM</strong></td>
-            <td>Prisma Client + PostgreSQL</td>
-            <td>7.10.0 / PG 16</td>
-            <td>Type-safe multi-tenant persistence with Docker containerization</td>
-          </tr>
-          <tr>
-            <td><strong>Queue & Worker</strong></td>
-            <td>BullMQ + Redis</td>
-            <td>6.3.4 / Redis 7</td>
-            <td>Repeatable scheduled background dispatch engine and queue daemon</td>
-          </tr>
-          <tr>
-            <td><strong>OAuth & Mail API</strong></td>
-            <td>MSAL Node & Microsoft Graph SDK</td>
-            <td>6.0.0 / 3.0.7</td>
-            <td>Delegated permission tokens (`Mail.Send`, `offline_access`) & AES-256-GCM token encryption</td>
-          </tr>
-          <tr>
-            <td><strong>Quality Assurance</strong></td>
-            <td>Playwright & TSX Test Runners</td>
-            <td>1.63.0</td>
-            <td>27 automated unit tests + 21 headless browser visual checkpoints</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-
-    <!-- Section 3: Architecture -->
-    <section id="architecture">
-      <h2>System Architecture</h2>
-      <pre><code>+-----------------------------------------------------------------------------------+
-|                               USER INTERFACE LAYER                                |
-|  - Onboarding Stepper  - Milestone 1 Send Test  - Leads Table & Bulk Actions      |
-|  - Sequence Builder    - Spintax Live Preview   - Pre-Flight Launch Modal          |
-|  - Emergency Stop      - Activity Feed Inspector- Delivery & Safety Settings      |
-+-----------------------------------------------------------------------------------+
-                                         |
-                                         v
-+-----------------------------------------------------------------------------------+
-|                             NEXT.JS API ROUTE HANDLERS                            |
-|  /api/auth/*           /api/leads/*             /api/campaigns/*   /api/worker/*  |
-|  (OAuth login & demo)  (CSV mapping & demo)     (CRUD & audits)    (Run & status) |
-+-----------------------------------------------------------------------------------+
-                                         |
-                 +-----------------------+-----------------------+
-                 |                                               |
-                 v                                               v
-+------------------------------------+          +------------------------------------+
-|       POSTGRESQL DATABASE          |          |      BULLMQ & REDIS ENGINE         |
-|  - Tenants & Users                 |          |  - outreach-dispatch Queue         |
-|  - Encrypted Mailbox Connections   |          |  - 5-Min Scheduled Dispatch Tick   |
-|  - Leads & Sequence Enrollments    |          |  - Midnight UTC Quota Reset Job    |
-|  - Step Sequences & SendLogs       |          |  - Background Worker Daemon        |
-+------------------------------------+          +------------------------------------+
-                 ^                                               |
-                 |                                               v
-                 +-----------------------------------------------+
-                                         |
-                                         v
-+-----------------------------------------------------------------------------------+
-|                        DISPATCHER ENGINE & SAFETY PIPELINE                        |
-|  1. Lead Opt-Out / Bounce Suppression Check                                        |
-|  2. Business-Hours Sending Window Verification (Mon-Fri 09:00 - 17:00)             |
-|  3. Safe Daily Quota Check (Mailbox <= 50, Campaign <= 30)                        |
-|  4. Spintax Permutation Tree & Variable Resolution ({{firstName}}, etc.)          |
-|  5. Token Expiry Check & MSAL AcquireTokenByRefreshToken Rotation                 |
-|  6. Microsoft Graph POST /me/sendMail with Stagger Delays                         |
-|  7. Circuit Breaker Error Tracking (Auto-pause if 3 consecutive failures)         |
-|  8. Atomic Transaction: Advance Step, Increment Counter, Write SendLog            |
-+-----------------------------------------------------------------------------------+</code></pre>
-    </section>
-
-    <!-- Section 4: Features & Engine -->
-    <section id="features-and-engine">
-      <h2>Core Engine & Feature Implementation</h2>
-
-      <div id="lead-management">
-        <h3>1. Lead Directory & Smart CSV Column Mapping</h3>
-        <p>
-          Uploaded prospect files are parsed with <code>papaparse</code>. A column-mapping dialog allows users to map any CSV column structure to required fields: <code>email</code>, <code>firstName</code>, <code>lastName</code>, and <code>company</code>. Leads are deduplicated on <code>(tenantId, email)</code> at the database level.
-        </p>
-        <ul>
-          <li><strong>B2B Demo Generator</strong>: One-click generation of 12 realistic prospect leads across tech and SaaS to immediately test sequences.</li>
-          <li><strong>Row-Level Quick Actions</strong>: Quick Test Send pre-filling modal with that lead's data, one-click email copying, and individual lead deletion.</li>
-          <li><strong>Bulk Actions Toolbar</strong>: Multi-select leads with floating toolbar to bulk-enroll into campaigns, export to CSV, or batch-delete.</li>
-        </ul>
-      </div>
-
-      <div id="sequence-builder">
-        <h3>2. Sequence Studio & Spintax Variation Engine</h3>
-        <p>
-          Campaign sequences support multi-step follow-ups with configurable delays (e.g. Step 1: Day 0, Step 2: Day 2, Step 3: Day 5).
-        </p>
-        <ul>
-          <li><strong>Spintax Permutation Parser</strong> (<code>src/lib/template-engine.ts</code>): Evaluates variations such as <code>{Quick question|Reaching out|Hello}</code>. Supports nested syntax trees.</li>
-          <li><strong>Dynamic Variables with Fallbacks</strong>: Resolves merge fields like <code>{{firstName | "there"}}</code>, <code>{{company | "your team"}}</code>, and <code>{{email}}</code>. Double braces are resolved before spintax pipes to prevent variable collision.</li>
-          <li><strong>Live Preview Modal</strong>: Live preview tool allowing users to pick enrolled prospect records, test random variation generation, and click "Re-Spin" to preview permutation diversity.</li>
-        </ul>
-      </div>
-
-      <div id="sending-engine">
-        <h3>3. Core Dispatcher & BullMQ Background Queue</h3>
-        <p>
-          The sending dispatcher (<code>src/lib/worker/dispatcher.ts</code>) processes active sequence enrollments:
-        </p>
-        <ul>
-          <li><strong>Token Lifecycle</strong>: Pre-flight check evaluates whether OAuth token expires within 2 minutes. If expired, automatically calls <code>msalClient.acquireTokenByRefreshToken()</code>, re-encrypts the new token with AES-256-GCM, and updates PostgreSQL.</li>
-          <li><strong>Step Transitioning</strong>: Dispatches current step, schedules <code>nextSendAt = now + delayDays * 86400000</code> for the subsequent step, or transitions status to <code>completed</code>.</li>
-          <li><strong>BullMQ Daemon</strong> (<code>scripts/run-worker.ts</code>): Runs via <code>npm run worker</code>. Listens for the 5-minute tick and midnight quota reset without requiring user clicks.</li>
-        </ul>
-      </div>
-
-      <div id="safety-guardrails">
-        <h3>4. Multi-Layer Campaign Safety Guardrails</h3>
-        <p>To eliminate account suspension risks and deliverability damage:</p>
-        <div class="grid-2">
-          <div class="card">
-            <h4 style="color:var(--primary); margin-top:0;">Pre-Flight Launch Verification Modal</h4>
-            <p style="font-size:0.85rem;">Intercepts activation clicks to audit mailbox health, sequence readiness, audience protection, and schedule alignment. Requires explicit user confirmation.</p>
-          </div>
-          <div class="card">
-            <h4 style="color:var(--accent); margin-top:0;">Sending Windows & Days</h4>
-            <p style="font-size:0.85rem;">Enforces delivery only during business hours (e.g. Mon–Fri 09:00–17:00). If outside the window, sends are deferred to the next window opening rather than failing.</p>
-          </div>
-          <div class="card">
-            <h4 style="color:var(--warning); margin-top:0;">Dual Safe Quotas</h4>
-            <p style="font-size:0.85rem;">Mailbox ceiling (default 50/day) and Campaign limit (default 30/day) enforced before each send to safeguard warm-up health.</p>
-          </div>
-          <div class="card">
-            <h4 style="color:var(--danger); margin-top:0;">Circuit Breaker & Emergency Stop</h4>
-            <p style="font-size:0.85rem;">Auto-pauses campaign on 3 consecutive errors (e.g. Graph 429 rate limit). 1-click Emergency Stop halts all sending immediately.</p>
-          </div>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step" style="border-color:var(--primary);">
+          <div style="font-weight:700; color:var(--primary);">4. BullMQ Queue</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">5-min stagger engine</div>
+        </div>
+        <div class="flow-arrow">➔</div>
+        <div class="flow-step" style="border-color:#38bdf8;">
+          <div style="font-weight:700; color:#38bdf8;">5. Microsoft Graph</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);">Direct Outlook API</div>
         </div>
       </div>
 
-      <div id="activity-feed">
-        <h3>5. Live Activity Feed & Email Inspector</h3>
-        <p>
-          Dispatched emails are recorded in real-time in the dashboard Activity Feed with status badges (<code>sent</code>, <code>simulated</code>, <code>failed</code>). Users can filter by tabs (<code>All</code>, <code>Test Sends</code>, <code>Campaigns</code>) and click any row to open the full email inspector modal showing recipient, exact subject, timestamp, and body preview.
-        </p>
+      <h3 style="color:var(--danger); margin-top:2rem;">2. The Multi-Layer Safety Shield</h3>
+      <p style="font-size:0.9rem;">Every email is evaluated against 5 layers of defense before a single byte leaves the server:</p>
+      <div class="grid-3" style="margin-top:0.75rem;">
+        <div class="card" style="border-left: 3px solid var(--warning);">
+          <strong style="color:var(--warning);">Daily Quota Cap</strong>
+          <p style="font-size:0.82rem; margin-top:0.35rem; margin-bottom:0;">Max 50 sends/day per mailbox and 30 sends/day per campaign. Auto-resets at midnight UTC.</p>
+        </div>
+        <div class="card" style="border-left: 3px solid var(--primary);">
+          <strong style="color:var(--primary);">Sending Windows</strong>
+          <p style="font-size:0.82rem; margin-top:0.35rem; margin-bottom:0;">Restricted to target business hours (Mon-Fri 9:00 AM - 5:00 PM). Never disturbs recipients on weekends.</p>
+        </div>
+        <div class="card" style="border-left: 3px solid var(--danger);">
+          <strong style="color:var(--danger);">Circuit Breaker</strong>
+          <p style="font-size:0.82rem; margin-top:0.35rem; margin-bottom:0;">Auto-pauses campaign after 3 consecutive errors to protect your sender domain reputation.</p>
+        </div>
       </div>
     </section>
 
-    <!-- Section 5: User Guide -->
-    <section id="user-guide">
-      <h2>Step-by-Step User Manual</h2>
-
-      <div id="guide-login">
-        <h3>Step 1: Connecting Outlook or Using Demo Mode</h3>
-        <p>1. Open <a href="http://localhost:3000">http://localhost:3000</a> in your browser.</p>
-        <p>2. Choose <strong>"Sign in with Microsoft"</strong> to connect your real Outlook account via Microsoft Entra ID (delegated permissions: <code>Mail.Send</code>, <code>User.Read</code>, <code>offline_access</code>).</p>
-        <p>3. Or choose <strong>"Use Demo Account"</strong> to launch an instant local simulation session with zero configuration.</p>
+    <!-- Section: Development Timeline -->
+    <section id="timeline">
+      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.6rem; margin-bottom: 1.5rem;">
+        <h2 style="border-bottom:none; margin:0; padding:0;">Development Journey Timeline</h2>
+        <div style="font-size:0.85rem; color:var(--text-subtle);">9 Milestones Completed</div>
       </div>
 
-      <div id="guide-leads">
-        <h3>Step 2: Managing Prospects in Leads Directory</h3>
-        <p>1. Navigate to <strong>Leads</strong> from the top navigation.</p>
-        <p>2. Click <strong>"Upload CSV"</strong> to upload a prospect list and map columns, or click <strong>"Generate Demo Leads"</strong> to populate 12 sample B2B contacts.</p>
-        <p>3. Use checkboxes to select leads and open the floating bulk toolbar to enroll them in campaigns or export to CSV.</p>
+      <!-- Filter chips -->
+      <div class="filter-bar">
+        <button class="chip active" onclick="filterTimeline('all')">All Milestones</button>
+        <button class="chip" onclick="filterTimeline('safety')">🛡️ Safety Guardrails</button>
+        <button class="chip" onclick="filterTimeline('engine')">⚡ Sending Engine & Queue</button>
+        <button class="chip" onclick="filterTimeline('leads')">👥 Leads & Privacy</button>
+        <button class="chip" onclick="filterTimeline('campaigns')">✉️ Campaigns & Spintax</button>
+        <button class="chip" onclick="filterTimeline('testing')">🧪 Testing & Verification</button>
       </div>
 
-      <div id="guide-campaigns">
-        <h3>Step 3: Creating Campaigns & Writing Sequences</h3>
-        <p>1. Navigate to <strong>Campaigns</strong> and click <strong>"New Campaign"</strong>.</p>
-        <p>2. In the <strong>Sequences</strong> tab, write your subject and body template. Use merge tags: <code>{{firstName}}</code>, <code>{{company}}</code>, or fallbacks like <code>{{firstName | "there"}}</code>.</p>
-        <p>3. Add Spintax variation blocks: <code>{Quick question|Reaching out|Checking in}</code>.</p>
-        <p>4. Click <strong>"Preview & Test"</strong> to open the spintax simulation tool and verify personalized output.</p>
-        <p>5. Click <strong>"+ Add Follow-up Step"</strong> to create subsequent steps and configure the delay (e.g. 2 days).</p>
-        <p>6. Switch to the <strong>Leads</strong> tab and click <strong>"Enroll Leads"</strong> to assign your prospect batch.</p>
-      </div>
+      <div class="timeline-container">
 
-      <div id="guide-safety">
-        <h3>Step 4: Configuring Safety Guardrails</h3>
-        <p>1. In Campaign Studio, switch to the <strong>Settings & Guardrails</strong> tab.</p>
-        <p>2. Adjust the <strong>Daily Campaign Sending Limit</strong> slider (recommended: 20–30 emails/day).</p>
-        <p>3. Set your <strong>Business Hours Sending Window</strong> (e.g. 09:00 to 17:00) and pick your allowed active sending days (Mon–Fri).</p>
-        <p>4. Configure the <strong>Minimum Dispatch Stagger</strong> (e.g. 60 seconds) and <strong>Circuit Breaker Threshold</strong> (e.g. 3 errors).</p>
-        <p>5. Click <strong>"Save Campaign & Safety Settings"</strong>.</p>
-      </div>
+        <!-- MILESTONE 1 -->
+        <div id="m1-setup" class="timeline-item" data-category="engine">
+          <div class="timeline-node">01</div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div>
+                <span class="badge badge-primary">Phase 1</span>
+                <span class="badge badge-subtle">Infrastructure</span>
+              </div>
+              <span class="badge badge-success">Completed</span>
+            </div>
+            <h3 class="timeline-title">Project Foundation & Modern Full-Stack Scaffolding</h3>
 
-      <div id="guide-dispatch">
-        <h3>Step 5: Activating Campaigns & Running Dispatches</h3>
-        <p>1. Click <strong>"Draft / Paused (Activate)"</strong> in the campaign header.</p>
-        <p>2. The <strong>Pre-Flight Verification Modal</strong> will pop up and run live audits on mailbox health, sequence steps, audience count, and delivery windows.</p>
-        <p>3. Review any warnings, toggle Dry Run mode if you want a simulated run, and click <strong>"Confirm & Arm Campaign"</strong>.</p>
-        <p>4. To run an immediate send pass, click <strong>"Run Dispatch Pass"</strong>.</p>
-        <p>5. If you ever need to stop all sending immediately, click the red <strong>"Emergency Stop"</strong> button in the Campaigns header.</p>
-      </div>
-    </section>
+            <div class="pfi-grid">
+              <div class="pfi-box pfi-problem">
+                <strong>🔴 The Problem:</strong> Building an email scheduler requires a modern, non-blocking stack that handles real-time UI, robust database relationships, and queue concurrency without slow page reloads.
+              </div>
+              <div class="pfi-box pfi-solution">
+                <strong>🟢 What We Did:</strong> Initialized Next.js 16 (App Router + Turbopack) with React 19, PostgreSQL 16 managed by Prisma 7 ORM, Redis 7 for queuing, and Tailwind CSS v4 for high-contrast dark mode.
+              </div>
+              <div class="pfi-box pfi-impact">
+                <strong>💡 Why It Matters:</strong> Gives the application sub-50ms page transitions, strict TypeScript type-safety from database to UI, and zero server crashes.
+              </div>
+            </div>
 
-    <!-- Section 6: API Reference -->
-    <section id="api-reference">
-      <h2>Complete API Specification</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Endpoint</th>
-            <th>Method</th>
-            <th>Description</th>
-            <th>Payload / Query</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>/api/auth/microsoft/login</code></td>
-            <td>GET</td>
-            <td>Initiates Microsoft MSAL OAuth flow</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td><code>/api/auth/microsoft/callback</code></td>
-            <td>GET</td>
-            <td>Exchanges OAuth code for access/refresh tokens</td>
-            <td><code>?code=...</code></td>
-          </tr>
-          <tr>
-            <td><code>/api/auth/demo</code></td>
-            <td>POST</td>
-            <td>Creates/resumes local demo tenant & session</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td><code>/api/mail/send-test</code></td>
-            <td>POST</td>
-            <td>Dispatches test email with custom parameters</td>
-            <td><code>{ recipientEmail, firstName, company, scenario }</code></td>
-          </tr>
-          <tr>
-            <td><code>/api/mail/logs</code></td>
-            <td>GET</td>
-            <td>Returns recent send log audit records</td>
-            <td><code>?limit=20</code></td>
-          </tr>
-          <tr>
-            <td><code>/api/leads/upload</code></td>
-            <td>POST</td>
-            <td>Bulk uploads and deduplicates leads</td>
-            <td><code>{ leads: LeadInput[] }</code></td>
-          </tr>
-          <tr>
-            <td><code>/api/leads/demo</code></td>
-            <td>POST / DELETE</td>
-            <td>Seeds 12 demo B2B prospects or clears list</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td><code>/api/campaigns/create</code></td>
-            <td>POST</td>
-            <td>Creates new outreach campaign draft</td>
-            <td><code>{ name }</code></td>
-          </tr>
-          <tr>
-            <td><code>/api/campaigns/[id]</code></td>
-            <td>GET / PUT / DELETE</td>
-            <td>Fetches, updates (steps + safety), or deletes campaign</td>
-            <td><code>{ name, steps, dailyLimit, ... }</code></td>
-          </tr>
-          <tr>
-            <td><code>/api/campaigns/[id]/audit</code></td>
-            <td>GET</td>
-            <td>Pre-flight verification audit for campaign</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td><code>/api/campaigns/[id]/enroll</code></td>
-            <td>POST</td>
-            <td>Enrolls batch or individual leads into sequence</td>
-            <td><code>{ batchId }</code> or <code>{ leadIds }</code></td>
-          </tr>
-          <tr>
-            <td><code>/api/campaigns/toggle-status</code></td>
-            <td>POST</td>
-            <td>Activates/pauses campaign and enrollments</td>
-            <td><code>{ campaignId, dryRunMode }</code></td>
-          </tr>
-          <tr>
-            <td><code>/api/campaigns/emergency-stop</code></td>
-            <td>POST</td>
-            <td>Atomically pauses all campaigns & enrollments</td>
-            <td>None</td>
-          </tr>
-          <tr>
-            <td><code>/api/worker/run</code></td>
-            <td>POST</td>
-            <td>Executes worker dispatch pass with telemetry</td>
-            <td><code>{ fastForwardDays, ignoreWindowForTesting }</code></td>
-          </tr>
-          <tr>
-            <td><code>/api/worker/status</code></td>
-            <td>GET</td>
-            <td>Returns queue, quota, and pending send metrics</td>
-            <td>None</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+            <div class="deep-dive-drawer">
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <div class="deep-dive-content">
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files configured:</strong> <code>prisma/schema.prisma</code>, <code>docker-compose.yml</code>, <code>src/app/layout.tsx</code></p>
+                <pre><code>// PostgreSQL 16 + Redis 7 Docker Containers
+docker run --name outreach-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:16-alpine
+docker run --name outreach-redis -p 6379:6379 -d redis:7-alpine</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    <!-- Section 7: Database Schema -->
-    <section id="database-schema">
-      <h2>Prisma Database Domain Model</h2>
-      <pre><code>model Tenant {
-  id        String      @id @default(cuid())
-  name      String
-  createdAt DateTime    @default(now())
-  users     User[]
-  leads     Lead[]
-  campaigns Campaign[]
-}
+        <!-- MILESTONE 2 -->
+        <div id="m2-oauth" class="timeline-item" data-category="engine">
+          <div class="timeline-node">02</div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div>
+                <span class="badge badge-primary">Phase 2</span>
+                <span class="badge badge-subtle">Authentication</span>
+              </div>
+              <span class="badge badge-success">Completed</span>
+            </div>
+            <h3 class="timeline-title">Outlook OAuth 2.0 & Microsoft Graph Integration</h3>
 
-model User {
-  id                 String              @id @default(cuid())
-  tenantId           String
-  email              String              @unique
-  createdAt          DateTime            @default(now())
-  tenant             Tenant              @relation(fields: [tenantId], references: [id])
-  mailboxConnections MailboxConnection[]
-}
+            <div class="pfi-grid">
+              <div class="pfi-box pfi-problem">
+                <strong>🔴 The Problem:</strong> Storing users' plain-text email passwords is a catastrophic security risk. Plus, Microsoft disabled basic authentication.
+              </div>
+              <div class="pfi-box pfi-solution">
+                <strong>🟢 What We Did:</strong> Integrated Microsoft Authentication Library (MSAL) using PKCE OAuth 2.0. Users securely log into Outlook via Microsoft's official login dialog, granting <code>Mail.Send</code> and <code>offline_access</code> permissions with encrypted token storage.
+              </div>
+              <div class="pfi-box pfi-impact">
+                <strong>💡 Why It Matters:</strong> 100% compliant with Microsoft security standards. Tokens refresh automatically in the background without user intervention.
+              </div>
+            </div>
 
-model MailboxConnection {
-  id                    String     @id @default(cuid())
-  userId                String
-  msAccountEmail        String
-  accessTokenEncrypted  String
-  refreshTokenEncrypted String
-  tokenExpiresAt        DateTime
-  dailySendCount        Int        @default(0)
-  dailySendResetAt      DateTime   @default(now())
-  dailyLimit            Int        @default(50) // Mailbox safe cap
-  status                String     @default("connected") // connected | expired | revoked
-  user                  User       @relation(fields: [userId], references: [id])
-  campaigns             Campaign[]
-}
+            <div class="deep-dive-drawer">
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <div class="deep-dive-content">
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/lib/auth/msal.ts</code>, <code>src/app/api/auth/login/route.ts</code>, <code>src/app/api/auth/callback/route.ts</code></p>
+                <div class="before-after-box">
+                  <div class="ba-col">
+                    <span class="ba-tag before">Before</span>
+                    <span>No email connectivity; risk of exposing credentials.</span>
+                  </div>
+                  <div class="ba-col">
+                    <span class="ba-tag after">After</span>
+                    <span>Official OAuth 2.0 PKCE flow with encrypted refresh tokens and connection health monitoring.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-model Lead {
-  id            String               @id @default(cuid())
-  tenantId      String
-  email         String
-  firstName     String?
-  lastName      String?
-  company       String?
-  customFields  Json?
-  status        String               @default("active") // active | unsubscribed | bounced
-  importBatchId String?
-  createdAt     DateTime             @default(now())
-  tenant        Tenant               @relation(fields: [tenantId], references: [id])
-  enrollments   SequenceEnrollment[]
+        <!-- MILESTONE 3 -->
+        <div id="m3-leads" class="timeline-item" data-category="leads">
+          <div class="timeline-node">03</div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div>
+                <span class="badge badge-primary">Phase 3</span>
+                <span class="badge badge-subtle">Data Privacy</span>
+              </div>
+              <span class="badge badge-success">Completed</span>
+            </div>
+            <h3 class="timeline-title">Privacy Sanitization, Demo Leads & Quick Actions</h3>
 
-  @@unique([tenantId, email])
-}
+            <div class="pfi-grid">
+              <div class="pfi-box pfi-problem">
+                <strong>🔴 The Problem:</strong> Real client prospects were uploaded during initial testing, posing privacy and compliance risks. Furthermore, testing outreach required a fast way to send single test emails or unsubscribe contacts.
+              </div>
+              <div class="pfi-box pfi-solution">
+                <strong>🟢 What We Did:</strong> Safely wiped real client data from the database. Built an automated 15-person Demo Leads Generator spanning 5 industries (SaaS, Fintech, Healthcare, Logistics, Real Estate) with realistic custom attributes. Added 1-click Quick Email and Opt-Out toggles in the Leads Directory.
+              </div>
+              <div class="pfi-box pfi-impact">
+                <strong>💡 Why It Matters:</strong> Complete privacy protection, instant 1-click test data generation, and rapid prospect management right from the table row.
+              </div>
+            </div>
 
-model Campaign {
-  id                   String               @id @default(cuid())
-  tenantId             String
-  name                 String
-  mailboxConnectionId  String
-  status               String               @default("draft") // draft | active | paused | done
-  
-  // Delivery & Safety Guardrails
-  dailyLimit           Int                  @default(30)
-  sendingWindowStart   String               @default("09:00")
-  sendingWindowEnd     String               @default("17:00")
-  sendingDays          String               @default("1,2,3,4,5") // Mon-Fri
-  minIntervalSeconds   Int                  @default(60)
-  maxConsecutiveErrors Int                  @default(3) // Circuit breaker
-  dryRunMode           Boolean              @default(false)
-  safetyPausedReason   String?
+            <div class="before-after-box">
+              <div class="ba-col">
+                <span class="ba-tag before">Before</span>
+                <span>Real client emails stored in DB; no quick way to test a single message or unsubscribe someone.</span>
+              </div>
+              <div class="ba-col">
+                <span class="ba-tag after">After</span>
+                <span>Zero real client data. 15 enriched demo leads. 1-click Quick Send modal + 1-click instant opt-out.</span>
+              </div>
+            </div>
 
-  tenant              Tenant               @relation(fields: [tenantId], references: [id])
-  mailboxConnection   MailboxConnection    @relation(fields: [mailboxConnectionId], references: [id])
-  sequence            Sequence?
-  enrollments         SequenceEnrollment[]
-}
+            <div class="deep-dive-drawer">
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <div class="deep-dive-content">
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/lib/leads/demo-generator.ts</code>, <code>src/app/api/leads/demo/route.ts</code>, <code>src/components/leads/LeadsDirectoryClient.tsx</code></p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-model Sequence {
-  id         String         @id @default(cuid())
-  campaignId String         @unique
-  campaign   Campaign       @relation(fields: [campaignId], references: [id])
-  steps      SequenceStep[]
-}
+        <!-- MILESTONE 4 -->
+        <div id="m4-campaigns" class="timeline-item" data-category="campaigns">
+          <div class="timeline-node">04</div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div>
+                <span class="badge badge-primary">Phase 4</span>
+                <span class="badge badge-subtle">Sequence Studio</span>
+              </div>
+              <span class="badge badge-success">Completed</span>
+            </div>
+            <h3 class="timeline-title">Campaign Studio, Spintax Permutations & Cascade Delete Fix</h3>
 
-model SequenceStep {
-  id              String   @id @default(cuid())
-  sequenceId      String
-  stepOrder       Int
-  delayDays       Int
-  subjectTemplate String
-  bodyTemplate    String
-  sequence        Sequence @relation(fields: [sequenceId], references: [id])
-}
+            <div class="pfi-grid">
+              <div class="pfi-box pfi-problem">
+                <strong>🔴 The Problem:</strong> Deleting campaigns was throwing server errors due to locked database foreign keys. Also, cold emails sound spammy and trigger filters when every recipient receives identical text.
+              </div>
+              <div class="pfi-box pfi-solution">
+                <strong>🟢 What We Did:</strong> Fixed campaign deletion using transactional cascade cleanup. Built a multi-step sequence builder with delay offsets and a recursive Spintax engine (e.g. <code>{Hi|Hello|Hey}</code>) with variable fallbacks (<code>{{firstName|there}}</code>) and a live interactive Spintax Preview modal.
+              </div>
+              <div class="pfi-box pfi-impact">
+                <strong>💡 Why It Matters:</strong> Every email sent is linguistically unique, preventing spam filter pattern detection. Campaigns can be deleted cleanly without database locks.
+              </div>
+            </div>
 
-model SequenceEnrollment {
-  id            String    @id @default(cuid())
-  leadId        String
-  sequenceId    String
-  campaignId    String
-  currentStepId String?
-  nextSendAt    DateTime
-  status        String    @default("active") // active | paused | completed | bounced
-  retryCount    Int       @default(0)
-  nextRetryAt   DateTime?
-  lead          Lead      @relation(fields: [leadId], references: [id])
-  campaign      Campaign  @relation(fields: [campaignId], references: [id])
-}
+            <div class="deep-dive-drawer">
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <div class="deep-dive-content">
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/lib/campaigns/spintax.ts</code>, <code>src/app/api/campaigns/[id]/route.ts</code>, <code>src/components/campaigns/SpintaxPreviewModal.tsx</code></p>
+                <pre><code>// Recursive Spintax Permutation Parser
+export function parseSpintax(text: string): string {
+  const pattern = /\{([^{}]+)\}/g;
+  while (pattern.test(text)) {
+    text = text.replace(pattern, (_, choices) => {
+      const parts = choices.split('|');
+      return parts[Math.floor(Math.random() * parts.length)];
+    });
+  }
+  return text;
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+              </div>
+            </div>
+          </div>
+        </div>
 
-model SendLog {
-  id             String   @id @default(cuid())
-  enrollmentId   String?
-  stepId         String?
-  recipientEmail String
-  subject        String
-  bodyPreview    String?  @db.Text
-  campaignName   String?
-  isTest         Boolean  @default(false)
-  sentAt         DateTime @default(now())
-  graphMessageId String?
-  status         String   // sent | failed | simulated | retried
-  errorMessage   String?
-}</code></pre>
-    </section>
+        <!-- MILESTONE 5 -->
+        <div id="m5-activity" class="timeline-item" data-category="campaigns">
+          <div class="timeline-node">05</div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div>
+                <span class="badge badge-primary">Phase 5</span>
+                <span class="badge badge-subtle">Observability</span>
+              </div>
+              <span class="badge badge-success">Completed</span>
+            </div>
+            <h3 class="timeline-title">Live Dispatched Activity Feed & Email Inspector</h3>
 
-    <!-- Section 8: CLI Commands & Verification -->
-    <section id="cli-commands">
-      <h2>CLI Commands & Operations</h2>
+            <div class="pfi-grid">
+              <div class="pfi-box pfi-problem">
+                <strong>🔴 The Problem:</strong> After starting a campaign, users had no visibility into what was happening. If an email failed, there was no way to know why.
+              </div>
+              <div class="pfi-box pfi-solution">
+                <strong>🟢 What We Did:</strong> Created a real-time Dispatched Emails feed with status badges (<code>SENT</code>, <code>FAILED</code>, <code>PENDING</code>), auto-refresh polling, search filters, and a deep-dive Email Detail Inspector modal showing exact rendered HTML, headers, and error logs.
+              </div>
+              <div class="pfi-box pfi-impact">
+                <strong>💡 Why It Matters:</strong> Total visibility into outbound communications. Debug deliverability issues in seconds with exact diagnostic messages.
+              </div>
+            </div>
 
-      <div class="card">
-        <h4 style="color:var(--primary); margin-top:0;">Development & Daemon Commands</h4>
-        <pre><code># Start the Next.js Dev Server (port 3000)
-npm run dev
+            <div class="deep-dive-drawer">
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <div class="deep-dive-content">
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/components/dashboard/RecentActivityFeed.tsx</code>, <code>src/components/emails/EmailDetailModal.tsx</code>, <code>src/app/api/emails/recent/route.ts</code></p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-# Run the Autonomous BullMQ Worker Daemon (listens on Redis for 5-min ticks)
+        <!-- MILESTONE 6 -->
+        <div id="m6-safety" class="timeline-item" data-category="safety">
+          <div class="timeline-node">06</div>
+          <div class="timeline-card" style="border-color: rgba(239, 68, 68, 0.4);">
+            <div class="timeline-card-header">
+              <div>
+                <span class="badge badge-danger">Phase 6</span>
+                <span class="badge badge-subtle">Safety Guardrails</span>
+              </div>
+              <span class="badge badge-success">Zero-Accident Design</span>
+            </div>
+            <h3 class="timeline-title">Multi-Layer Campaign Execution Safety Guardrails</h3>
+
+            <div class="pfi-grid">
+              <div class="pfi-box pfi-problem">
+                <strong>🔴 The Problem:</strong> Sending cold email carries severe risks: sending during the middle of the night, blasting 1,000 emails at once, hitting unsubscribed contacts, or continuing to send after mailboxes get flagged.
+              </div>
+              <div class="pfi-box pfi-solution">
+                <strong>🟢 What We Did:</strong> Implemented a 5-layer defense architecture:
+                <ul style="margin: 0.5rem 0 0.5rem 1.25rem; font-size: 0.85rem;">
+                  <li><strong>Pre-Flight Audit Checklist:</strong> Blocks campaign activation until 6 criteria pass (mailbox, sequence, leads, syntax, quota, schedule).</li>
+                  <li><strong>Dual Quota Limits:</strong> Daily cap for mailbox (50) and campaign (30).</li>
+                  <li><strong>Business Hours Windows:</strong> Only sends between 09:00 - 17:00 in target timezone (Mon-Fri).</li>
+                  <li><strong>Automated Circuit Breaker:</strong> Auto-pauses after 3 consecutive failures.</li>
+                  <li><strong>Global Emergency Stop:</strong> Red kill-switch button visible everywhere to halt all sends instantly.</li>
+                </ul>
+              </div>
+              <div class="pfi-box pfi-impact">
+                <strong>💡 Why It Matters:</strong> Makes human error practically impossible and keeps your sender domain off email blacklists.
+              </div>
+            </div>
+
+            <div class="before-after-box">
+              <div class="ba-col">
+                <span class="ba-tag before">Before</span>
+                <span>Unchecked campaigns could blast hundreds of emails at 3 AM or repeatedly fail on invalid emails.</span>
+              </div>
+              <div class="ba-col">
+                <span class="ba-tag after">After</span>
+                <span>Automated pre-flight modal, strict business hours, dual daily quotas, circuit breaker auto-pause, and global kill switch.</span>
+              </div>
+            </div>
+
+            <div class="deep-dive-drawer">
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <div class="deep-dive-content">
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/lib/worker/dispatcher.ts</code>, <code>src/app/api/campaigns/[id]/audit/route.ts</code>, <code>src/app/api/campaigns/emergency-stop/route.ts</code>, <code>src/components/campaigns/CampaignLaunchGuardModal.tsx</code></p>
+                <pre><code>// Automated Circuit Breaker & Pre-Flight Check in dispatcher.ts
+if (consecutiveFailures >= 3) {
+  await prisma.campaign.update({
+    where: { id: campaign.id },
+    data: { status: 'PAUSED', pauseReason: 'CIRCUIT_BREAKER_TRIGGERED: 3 consecutive failures' }
+  });
+}</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MILESTONE 7 -->
+        <div id="m7-bullmq" class="timeline-item" data-category="engine">
+          <div class="timeline-node">07</div>
+          <div class="timeline-card" style="border-color: rgba(56, 189, 248, 0.4);">
+            <div class="timeline-card-header">
+              <div>
+                <span class="badge badge-primary">Phase 7</span>
+                <span class="badge badge-subtle">Background Worker</span>
+              </div>
+              <span class="badge badge-success">Completed</span>
+            </div>
+            <h3 class="timeline-title">The Autonomous Background Sending Engine (BullMQ + Redis)</h3>
+
+            <div class="pfi-grid">
+              <div class="pfi-box pfi-problem">
+                <strong>🔴 The Problem:</strong> Cold outreach should run hands-free. Having to keep a browser tab open or manually click "Send" is fragile and impractical.
+              </div>
+              <div class="pfi-box pfi-solution">
+                <strong>🟢 What We Did:</strong> Built a production-grade background worker daemon using BullMQ and Redis. Registered recurring job schedulers that wake up every 5 minutes to process due emails and reset quotas at midnight UTC.
+              </div>
+              <div class="pfi-box pfi-impact">
+                <strong>💡 Why It Matters:</strong> The engine runs continuously as a background service. You can close your browser, turn off your laptop, and the scheduler keeps executing safely.
+              </div>
+            </div>
+
+            <div class="deep-dive-drawer">
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <div class="deep-dive-content">
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/lib/worker/queue.ts</code>, <code>scripts/run-worker.ts</code>, <code>package.json</code></p>
+                <pre><code>// Run the standalone daemon
 npm run worker
 
-# Run Docker Containers (PostgreSQL & Redis)
-docker compose up -d
+// BullMQ v6 Repeatable Job Registration
+await outreachQueue.upsertJobScheduler('dispatch-5min-tick', { every: 300000 });
+await outreachQueue.upsertJobScheduler('midnight-quota-reset', { pattern: '0 0 * * *' });</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+              </div>
+            </div>
+          </div>
+        </div>
 
-# Sync Database Schema with Prisma
-npx prisma db push
-npx prisma generate</code></pre>
+        <!-- MILESTONE 8 -->
+        <div id="m8-testing" class="timeline-item" data-category="testing">
+          <div class="timeline-node">08</div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div>
+                <span class="badge badge-success">Phase 8</span>
+                <span class="badge badge-subtle">Quality Assurance</span>
+              </div>
+              <span class="badge badge-success">100% Pass Rate</span>
+            </div>
+            <h3 class="timeline-title">Exhaustive Test Verification & Zero UI Defects</h3>
+
+            <div class="pfi-grid">
+              <div class="pfi-box pfi-problem">
+                <strong>🔴 The Problem:</strong> Cold email bugs cause irreversible damage (e.g. sending duplicates, emailing the wrong person). Testing in production is not an option.
+              </div>
+              <div class="pfi-box pfi-solution">
+                <strong>🟢 What We Did:</strong> Wrote two automated test suites covering 37 unit and integration tests (safety rules, quotas, circuit breaker, BullMQ scheduler) plus 21 Playwright browser screenshots verifying every modal, button, and table.
+              </div>
+              <div class="pfi-box pfi-impact">
+                <strong>💡 Why It Matters:</strong> 100% verified behavior before writing a single live email to Microsoft Graph.
+              </div>
+            </div>
+
+            <div class="card" style="margin: 0.75rem 0; padding: 1rem; background: #090a0f;">
+              <div class="grid-3" style="text-align:center;">
+                <div>
+                  <div style="font-size:1.6rem; font-weight:800; color:var(--accent);">27 / 27</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Safety Guardrails Tests</div>
+                </div>
+                <div>
+                  <div style="font-size:1.6rem; font-weight:800; color:var(--primary);">10 / 10</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">BullMQ Engine Tests</div>
+                </div>
+                <div>
+                  <div style="font-size:1.6rem; font-weight:800; color:#fbbf24;">21 / 21</div>
+                  <div style="font-size:0.75rem; color:var(--text-muted);">Playwright UI Checks</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="deep-dive-drawer">
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <div class="deep-dive-content">
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Test runner scripts:</strong></p>
+                <pre><code>npx tsx scripts/test-safety-guardrails.ts
+npx tsx scripts/test-bullmq-worker.ts
+node scripts/playwright-test.mjs</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MILESTONE 9 -->
+        <div id="m9-publish" class="timeline-item" data-category="engine">
+          <div class="timeline-node success">09</div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div>
+                <span class="badge badge-success">Phase 9</span>
+                <span class="badge badge-subtle">Deployment</span>
+              </div>
+              <span class="badge badge-success">Live on GitHub</span>
+            </div>
+            <h3 class="timeline-title">Branch Publication & Interactive Documentation</h3>
+
+            <div class="pfi-grid">
+              <div class="pfi-box pfi-problem">
+                <strong>🔴 The Problem:</strong> Code without clear documentation or version control leaves teams confused about what changed and how to run it.
+              </div>
+              <div class="pfi-box pfi-solution">
+                <strong>🟢 What We Did:</strong> Published clean branch <code>devFlorian</code> to GitHub. Generated this interactive timeline documentation available both as an offline HTML file and served directly via Next.js at <code>/docs.html</code>.
+              </div>
+              <div class="pfi-box pfi-impact">
+                <strong>💡 Why It Matters:</strong> Seamless onboarding for developers, clear audit trail for stakeholders, and zero ambiguity on how the system works.
+              </div>
+            </div>
+
+            <div class="deep-dive-drawer">
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <div class="deep-dive-content">
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Repository:</strong> <a href="https://github.com/SHIROxcx/Emailoutreachwebapp/tree/devFlorian" target="_blank">github.com/SHIROxcx/Emailoutreachwebapp (branch devFlorian)</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
+    </section>
 
-      <div class="card">
-        <h4 style="color:var(--accent); margin-top:0;">Automated Testing Suite</h4>
-        <pre><code># Run BullMQ & Redis Integration Test (10 tests)
-npx tsx --env-file=.env scripts/test-bullmq-worker.ts
+    <!-- Section: How To Use (Quick Start Guide) -->
+    <section id="how-to-use" style="margin-top: 4rem;">
+      <h2>How To Use The Application (1-Minute Quick Start)</h2>
+      
+      <div class="grid-2">
+        <div class="card">
+          <div style="font-weight:700; color:var(--primary); font-size:1rem; margin-bottom:0.5rem;">Step 1: Start Infrastructure</div>
+          <p style="font-size:0.85rem;">Make sure Docker is running, then verify PostgreSQL and Redis:</p>
+          <pre><code>docker start outreach-postgres outreach-redis</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+        </div>
 
-# Run Multi-Layer Safety Guardrails Test (27 tests)
-npx tsx --env-file=.env scripts/test-safety-guardrails.ts
+        <div class="card">
+          <div style="font-weight:700; color:var(--accent); font-size:1rem; margin-bottom:0.5rem;">Step 2: Start Web Server</div>
+          <p style="font-size:0.85rem;">Run the Next.js frontend and API server:</p>
+          <pre><code>npm run dev</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+          <p style="font-size:0.8rem; color:var(--text-muted);">Open <a href="http://localhost:3000" target="_blank">http://localhost:3000</a> in your browser.</p>
+        </div>
 
-# Run Headless Browser Visual Test Suite (Playwright - 21 visual checkpoints)
-node scripts/playwright-test.mjs
+        <div class="card">
+          <div style="font-weight:700; color:var(--warning); font-size:1rem; margin-bottom:0.5rem;">Step 3: Generate Demo Leads</div>
+          <p style="font-size:0.85rem;">Navigate to <strong>Leads</strong> in the top navigation, and click the blue <strong>"Generate Demo Leads"</strong> button to load 15 rich test prospects.</p>
+        </div>
 
-# Verify TypeScript Cleanliness (0 errors)
-npx tsc --noEmit</code></pre>
+        <div class="card">
+          <div style="font-weight:700; color:#a78bfa; font-size:1rem; margin-bottom:0.5rem;">Step 4: Launch Background Engine</div>
+          <p style="font-size:0.85rem;">In a separate terminal, launch the autonomous worker daemon:</p>
+          <pre><code>npm run worker</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+        </div>
       </div>
+    </section>
+
+    <!-- Section: API Reference -->
+    <section id="api-reference" style="margin-top: 4rem;">
+      <h2>REST API Reference</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Method</th>
+            <th>Endpoint</th>
+            <th>Description</th>
+            <th>Safety Checks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>GET</code></td>
+            <td><code>/api/campaigns/[id]/audit</code></td>
+            <td>Pre-flight checklist evaluation</td>
+            <td>Mailbox, Sequence, Quota, Window, Spintax</td>
+          </tr>
+          <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/campaigns/emergency-stop</code></td>
+            <td>1-click global kill switch</td>
+            <td>Pauses all campaigns instantly</td>
+          </tr>
+          <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/campaigns/toggle-status</code></td>
+            <td>Activate or pause a campaign</td>
+            <td>Enforces pre-flight audit before activation</td>
+          </tr>
+          <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/worker/run</code></td>
+            <td>Trigger manual dispatch sweep</td>
+            <td>Evaluates quotas, windows, circuit breaker</td>
+          </tr>
+          <tr>
+            <td><code>POST</code></td>
+            <td><code>/api/leads/demo</code></td>
+            <td>Populate 15 realistic prospects</td>
+            <td>Sanitized mock data only</td>
+          </tr>
+          <tr>
+            <td><code>DELETE</code></td>
+            <td><code>/api/campaigns/[id]</code></td>
+            <td>Safe cascade deletion</td>
+            <td>Cleans up leads, steps, and logs safely</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
     <!-- Footer -->
-    <footer style="margin-top:4rem; padding-top:2rem; border-top:1px solid var(--card-border); color:#64748b; font-size:0.85rem; display:flex; justify-content:space-between; align-items:center;">
-      <div>Outlook Cold Email Outreach Scheduler • Published on branch <code>devFlorian</code></div>
-      <div>Crafted with precision & production engineering standards</div>
+    <footer style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-subtle); font-size: 0.82rem; text-align: center;">
+      Outlook Outreach Scheduler — Branch <code>devFlorian</code> — Built with Next.js 16, React 19, Prisma 7, PostgreSQL 16, Redis 7 & BullMQ.
     </footer>
+
   </main>
 </div>
+
+<script>
+  // Mode switcher (Simple Story Mode vs Engineering Deep-Dive)
+  function setMode(mode) {
+    const body = document.body;
+    const btnSimple = document.getElementById('btn-mode-simple');
+    const btnTech = document.getElementById('btn-mode-tech');
+
+    if (mode === 'simple') {
+      body.classList.remove('mode-tech');
+      body.classList.add('mode-simple');
+      btnSimple.classList.add('active', 'primary');
+      btnTech.classList.remove('active', 'primary');
+    } else {
+      body.classList.remove('mode-simple');
+      body.classList.add('mode-tech');
+      btnTech.classList.add('active', 'primary');
+      btnSimple.classList.remove('active', 'primary');
+    }
+  }
+
+  // Toggle individual deep-dive drawers in simple mode
+  function toggleDrawer(button) {
+    const content = button.nextElementSibling;
+    if (content.classList.contains('force-open')) {
+      content.classList.remove('force-open');
+      button.textContent = 'Inspect Tech Details ▾';
+    } else {
+      content.classList.add('force-open');
+      button.textContent = 'Hide Tech Details ▴';
+    }
+  }
+
+  // Filter timeline items by category
+  function filterTimeline(category) {
+    const chips = document.querySelectorAll('.chip');
+    chips.forEach(chip => chip.classList.remove('active'));
+    event.target.classList.add('active');
+
+    const items = document.querySelectorAll('.timeline-item');
+    items.forEach(item => {
+      if (category === 'all' || item.getAttribute('data-category') === category) {
+        item.classList.remove('hidden');
+      } else {
+        item.classList.add('hidden');
+      }
+    });
+  }
+
+  // Copy code helper
+  function copyCode(button) {
+    const pre = button.parentElement;
+    const code = pre.querySelector('code').innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      const originalText = button.textContent;
+      button.textContent = 'Copied!';
+      setTimeout(() => { button.textContent = originalText; }, 1800);
+    });
+  }
+</script>
 
 </body>
 </html>

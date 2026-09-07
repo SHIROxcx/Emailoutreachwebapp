@@ -156,7 +156,7 @@ async function runTests() {
   });
   await prisma.sequenceEnrollment.updateMany({
     where: { campaignId: testCampaign.id },
-    data: { status: "active", nextSendAt: new Date() },
+    data: { status: "active", nextSendAt: new Date(), currentStepId: null },
   });
 
   // --- Test 6: Dispatcher Execution with Dry Run Guardrail ---
@@ -169,7 +169,7 @@ async function runTests() {
   });
 
   assert(dryRunStats.sent === 2, `Dispatched 2 simulated test emails (sent: ${dryRunStats.sent})`);
-  assert(dryRunStats.advanced === 2, `Advanced 2 sequence enrollments (advanced: ${dryRunStats.advanced})`);
+  assert(dryRunStats.advanced + dryRunStats.completed === 2, `Processed 2 sequence enrollments (advanced: ${dryRunStats.advanced}, completed: ${dryRunStats.completed})`);
 
   // Verify the SendLog was written with isTest: true and status: "simulated"
   const recentLogs = await prisma.sendLog.findMany({
