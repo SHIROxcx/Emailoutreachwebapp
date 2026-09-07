@@ -64,9 +64,26 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const { name, steps } = body as {
+    const {
+      name,
+      steps,
+      dailyLimit,
+      sendingWindowStart,
+      sendingWindowEnd,
+      sendingDays,
+      minIntervalSeconds,
+      maxConsecutiveErrors,
+      dryRunMode,
+    } = body as {
       name?: string;
-      steps: StepUpdateInput[];
+      steps?: StepUpdateInput[];
+      dailyLimit?: number;
+      sendingWindowStart?: string;
+      sendingWindowEnd?: string;
+      sendingDays?: string;
+      minIntervalSeconds?: number;
+      maxConsecutiveErrors?: number;
+      dryRunMode?: boolean;
     };
 
     const campaign = await prisma.campaign.findFirst({
@@ -87,11 +104,21 @@ export async function PUT(
       sequenceId = newSeq.id;
     }
 
-    // Update campaign name if provided
-    if (name && name.trim().length > 0) {
+    // Update campaign attributes including safety guardrails
+    const updateData: Record<string, unknown> = {};
+    if (name && name.trim().length > 0) updateData.name = name.trim();
+    if (typeof dailyLimit === "number") updateData.dailyLimit = Math.max(1, Math.min(200, dailyLimit));
+    if (typeof sendingWindowStart === "string") updateData.sendingWindowStart = sendingWindowStart;
+    if (typeof sendingWindowEnd === "string") updateData.sendingWindowEnd = sendingWindowEnd;
+    if (typeof sendingDays === "string") updateData.sendingDays = sendingDays;
+    if (typeof minIntervalSeconds === "number") updateData.minIntervalSeconds = Math.max(5, minIntervalSeconds);
+    if (typeof maxConsecutiveErrors === "number") updateData.maxConsecutiveErrors = Math.max(1, maxConsecutiveErrors);
+    if (typeof dryRunMode === "boolean") updateData.dryRunMode = dryRunMode;
+
+    if (Object.keys(updateData).length > 0) {
       await prisma.campaign.update({
         where: { id: campaign.id },
-        data: { name: name.trim() },
+        data: updateData,
       });
     }
 

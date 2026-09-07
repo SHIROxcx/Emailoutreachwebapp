@@ -36,6 +36,7 @@ model MailboxConnection {
   tokenExpiresAt        DateTime
   dailySendCount        Int      @default(0)
   dailySendResetAt      DateTime @default(now())
+  dailyLimit            Int      @default(50) // Mailbox-level safe sending cap
   status                String   @default("connected") // connected | expired | revoked
   user                  User     @relation(fields: [userId], references: [id])
   campaigns             Campaign[]
@@ -59,11 +60,22 @@ model Lead {
 }
 
 model Campaign {
-  id                  String               @id @default(cuid())
-  tenantId            String
-  name                String
-  mailboxConnectionId String
-  status              String               @default("draft") // draft | active | paused | done
+  id                   String               @id @default(cuid())
+  tenantId             String
+  name                 String
+  mailboxConnectionId  String
+  status               String               @default("draft") // draft | active | paused | done
+  
+  // Safety Guardrails Configuration
+  dailyLimit           Int                  @default(30) // max emails this campaign can send per day
+  sendingWindowStart   String               @default("09:00") // HH:mm format
+  sendingWindowEnd     String               @default("17:00") // HH:mm format
+  sendingDays          String               @default("1,2,3,4,5") // Mon-Fri (1=Mon, 7=Sun)
+  minIntervalSeconds   Int                  @default(60) // stagger delay between sends
+  maxConsecutiveErrors Int                  @default(3) // circuit breaker trigger
+  dryRunMode           Boolean              @default(false) // simulate execution without Graph send
+  safetyPausedReason   String?              // populated if circuit breaker auto-pauses
+
   tenant              Tenant               @relation(fields: [tenantId], references: [id])
   mailboxConnection   MailboxConnection    @relation(fields: [mailboxConnectionId], references: [id])
   sequence            Sequence?

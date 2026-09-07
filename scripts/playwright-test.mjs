@@ -152,19 +152,33 @@ async function runUITests() {
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "12_campaign_leads_tab.png") });
     console.log("Captured 12_campaign_leads_tab.png");
 
-    // 11. Switch to Settings Tab
-    console.log("11. Testing Settings tab in Campaign Studio...");
+    // 11. Switch to Settings & Guardrails Tab
+    console.log("11. Testing Settings & Guardrails tab in Campaign Studio...");
     await page.click("button[role='tab']:has-text('Settings')");
     await page.waitForTimeout(300);
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "13_campaign_settings_tab.png") });
     console.log("Captured 13_campaign_settings_tab.png");
 
-    // 12. Toggle Campaign Status
-    console.log("12. Toggling Campaign Status...");
+    // 12. Pre-Flight Campaign Verification Modal
+    console.log("12. Triggering Pre-Flight Campaign Verification Guardrail Modal...");
     await page.click("button:has-text('Draft / Paused (Activate)')");
-    await page.waitForSelector("text=Campaign Active (Pause)", { timeout: 5000 });
+    await page.waitForSelector("text=Mailbox Health", { timeout: 8000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "18_preflight_audit_modal.png") });
+    console.log("Captured 18_preflight_audit_modal.png");
+
+    // Click Confirm & Arm Campaign
+    console.log("12b. Confirming Pre-Flight Activation...");
+    await page.click("button:has-text('Confirm & Arm Campaign')");
+    await page.waitForSelector("text=Campaign Active (Pause)", { timeout: 8000 });
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "14_campaign_activated.png") });
     console.log("Captured 14_campaign_activated.png");
+
+    // 12c. Test Run Dispatch Pass
+    console.log("12c. Testing Run Dispatch Pass with safety telemetry...");
+    await page.click("button:has-text('Run Dispatch Pass')");
+    await page.waitForSelector("text=Dispatch finished", { timeout: 10000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "19_dispatch_pass_telemetry.png") });
+    console.log("Captured 19_dispatch_pass_telemetry.png");
 
     // 13. Test Leads Quick Actions & Bulk Bar
     console.log("13. Testing Leads directory quick actions and bulk selection...");
@@ -194,12 +208,29 @@ async function runUITests() {
       await page.waitForTimeout(300);
     }
 
-    // 14. Test Campaign Deletion
-    console.log("14. Testing Campaign Delete Functionality...");
+    // 14. Verify Campaigns Overview Safety Controls
+    console.log("14. Testing Campaigns Overview Safety Controls...");
     await page.click("text=Campaigns");
     await page.waitForURL("**/dashboard/campaigns", { timeout: 10000 });
     await page.waitForSelector("button:has-text('Delete')", { timeout: 5000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "20_campaigns_overview_safety_controls.png") });
+    console.log("Captured 20_campaigns_overview_safety_controls.png");
 
+    // 14b. Test Emergency Stop button
+    const emergencyBtn = await page.$("button:has-text('Emergency Stop')");
+    if (emergencyBtn) {
+      console.log("14b. Testing Emergency Stop kill switch button...");
+      page.once("dialog", async (dialog) => {
+        await dialog.accept();
+      });
+      await emergencyBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "21_emergency_stop_activated.png") });
+      console.log("Captured 21_emergency_stop_activated.png");
+    }
+
+    // 15. Test Campaign Deletion
+    console.log("15. Testing Campaign Delete Functionality...");
     // Handle confirm dialog
     page.once("dialog", async (dialog) => {
       await dialog.accept();
