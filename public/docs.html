@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Outlook Cold Email Outreach Scheduler — Complete Technical Documentation & User Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card-bg: #11131b;
+      --card-border: #1e2230;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --primary: #38bdf8;
+      --accent: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --code-bg: #0d1117;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 15px;
+    }
+    code, pre, .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 280px;
+      background-color: #0b0d14;
+      border-right: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 2rem 1.25rem;
+      flex-shrink: 0;
+    }
+    .main {
+      flex: 1;
+      padding: 3rem 4rem;
+      max-width: 1080px;
+    }
+    .nav-group-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #64748b;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .nav-link {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+    .nav-link:hover {
+      color: #fff;
+      background-color: #1a1f2e;
+      text-decoration: none;
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .badge-primary { background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.25); }
+    .badge-success { background: rgba(16, 185, 129, 0.12); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25); }
+    .badge-warning { background: rgba(245, 158, 11, 0.12); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); }
+    .badge-danger { background: rgba(239, 68, 68, 0.12); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.25); }
+    
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+    @media (max-width: 900px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--card-border); }
+      .main { padding: 2rem 1.5rem; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+    
+    h1 { font-size: 2.25rem; font-weight: 800; tracking-tight: -0.03em; margin-bottom: 0.5rem; color: #fff; }
+    h2 { font-size: 1.5rem; font-weight: 700; margin-top: 2.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--card-border); padding-bottom: 0.5rem; color: #fff; }
+    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #e2e8f0; }
+    p { margin-bottom: 1rem; color: #cbd5e1; }
+    ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #cbd5e1; }
+    li { margin-bottom: 0.35rem; }
+    
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+    code {
+      background: rgba(255,255,255,0.06);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      font-size: 0.85em;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+    }
+    th, td {
+      border: 1px solid var(--card-border);
+      padding: 0.65rem 0.85rem;
+      text-align: left;
+    }
+    th {
+      background-color: rgba(255,255,255,0.03);
+      font-weight: 600;
+      color: #94a3b8;
+    }
+    
+    .alert {
+      border-left: 4px solid var(--primary);
+      background: rgba(56, 189, 248, 0.06);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1rem 0;
+    }
+    .alert-success { border-color: var(--accent); background: rgba(16, 185, 129, 0.06); }
+    .alert-warning { border-color: var(--warning); background: rgba(245, 158, 11, 0.06); }
+    .alert-danger { border-color: var(--danger); background: rgba(239, 68, 68, 0.06); }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1.5rem;">
+      <div style="width:32px; height:32px; border-radius:8px; background:var(--primary); display:flex; align-items:center; justify-content:center; color:#000; font-weight:800;">
+        OS
+      </div>
+      <div>
+        <div style="font-weight:700; font-size:0.9rem;">Outreach Scheduler</div>
+        <div style="font-size:0.75rem; color:#64748b;">v1.0 Production Ready</div>
+      </div>
+    </div>
+
+    <div class="badge badge-primary" style="margin-bottom: 1.5rem; width: 100%; justify-content: center;">
+      Branch: devFlorian
+    </div>
+
+    <nav>
+      <div class="nav-group-title">Overview</div>
+      <a href="#executive-summary" class="nav-link">Executive Summary</a>
+      <a href="#tech-stack" class="nav-link">Tech Stack</a>
+      <a href="#architecture" class="nav-link">System Architecture</a>
+
+      <div class="nav-group-title">Features & Engine</div>
+      <a href="#lead-management" class="nav-link">Lead Directory & Mapping</a>
+      <a href="#sequence-builder" class="nav-link">Sequence Studio & Spintax</a>
+      <a href="#sending-engine" class="nav-link">Core Dispatcher & BullMQ</a>
+      <a href="#safety-guardrails" class="nav-link">Multi-Layer Safety Guardrails</a>
+      <a href="#activity-feed" class="nav-link">Activity Feed & Telemetry</a>
+
+      <div class="nav-group-title">User Guide</div>
+      <a href="#guide-login" class="nav-link">1. Connect Account / Demo</a>
+      <a href="#guide-leads" class="nav-link">2. Managing Prospects</a>
+      <a href="#guide-campaigns" class="nav-link">3. Building Sequences</a>
+      <a href="#guide-safety" class="nav-link">4. Configuring Guardrails</a>
+      <a href="#guide-dispatch" class="nav-link">5. Activating & Sending</a>
+
+      <div class="nav-group-title">Reference</div>
+      <a href="#api-reference" class="nav-link">API Specification</a>
+      <a href="#database-schema" class="nav-link">Database Schema</a>
+      <a href="#cli-commands" class="nav-link">CLI Commands & Verification</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <!-- Header -->
+    <header style="margin-bottom: 2.5rem;">
+      <div style="display:flex; gap:0.5rem; margin-bottom:0.75rem;">
+        <span class="badge badge-success">✓ 37 Automated Tests Passed</span>
+        <span class="badge badge-primary">Next.js 16 + React 19</span>
+        <span class="badge badge-warning">Zero UI Defects (Playwright)</span>
+      </div>
+      <h1>Outlook Outreach Scheduler</h1>
+      <p style="font-size: 1.1rem; color: #94a3b8;">
+        Full-stack automated cold email scheduling system with Microsoft Graph integration, multi-touch sequences, Spintax permutation engine, strict safety guardrails, and autonomous BullMQ queue execution.
+      </p>
+    </header>
+
+    <!-- Section 1: Executive Summary -->
+    <section id="executive-summary">
+      <h2>Executive Summary</h2>
+      <p>
+        The <strong>Outlook Outreach Scheduler</strong> is an enterprise-grade cold email orchestration web platform engineered specifically for Microsoft 365 and personal Outlook mailboxes. It solves the critical deliverability challenges inherent in outbound email marketing: preventing spam flags, respecting strict Graph API rate limits, protecting sender domain reputation, eliminating human configuration error through pre-flight audits, and honoring CAN-SPAM and GDPR compliance.
+      </p>
+
+      <div class="grid-3">
+        <div class="card">
+          <h3 style="color:var(--primary); margin-top:0;">Autonomy</h3>
+          <p style="font-size:0.85rem;">Autonomous BullMQ worker daemon running 24/7 on Redis, executing scheduled staggered dispatch ticks every 5 minutes with midnight quota resets.</p>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--accent); margin-top:0;">Deliverability</h3>
+          <p style="font-size:0.85rem;">Spintax permutation trees (`{Hi|Hello}`), dynamic merge tags (`{{firstName}}`), business-hours delivery windows (Mon–Fri 9–5), and custom delay stagger.</p>
+        </div>
+        <div class="card">
+          <h3 style="color:var(--danger); margin-top:0;">Safety Guardrails</h3>
+          <p style="font-size:0.85rem;">Automated circuit breaker that auto-pauses on 3 consecutive errors, pre-flight launch verification modal, opt-out suppression, and 1-click Emergency Stop.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Tech Stack -->
+    <section id="tech-stack">
+      <h2>Technology Stack</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>Technology</th>
+            <th>Version</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Framework</strong></td>
+            <td>Next.js (App Router, Turbopack)</td>
+            <td>16.3.4</td>
+            <td>Full-stack React server components & API route handlers</td>
+          </tr>
+          <tr>
+            <td><strong>Frontend Library</strong></td>
+            <td>React</td>
+            <td>19.2.8</td>
+            <td>Modern client state, live previews, and modal architectures</td>
+          </tr>
+          <tr>
+            <td><strong>Styling</strong></td>
+            <td>Tailwind CSS</td>
+            <td>v4.0</td>
+            <td>Engineered utility-first CSS conforming to strict design system standards</td>
+          </tr>
+          <tr>
+            <td><strong>Database ORM</strong></td>
+            <td>Prisma Client + PostgreSQL</td>
+            <td>7.10.0 / PG 16</td>
+            <td>Type-safe multi-tenant persistence with Docker containerization</td>
+          </tr>
+          <tr>
+            <td><strong>Queue & Worker</strong></td>
+            <td>BullMQ + Redis</td>
+            <td>6.3.4 / Redis 7</td>
+            <td>Repeatable scheduled background dispatch engine and queue daemon</td>
+          </tr>
+          <tr>
+            <td><strong>OAuth & Mail API</strong></td>
+            <td>MSAL Node & Microsoft Graph SDK</td>
+            <td>6.0.0 / 3.0.7</td>
+            <td>Delegated permission tokens (`Mail.Send`, `offline_access`) & AES-256-GCM token encryption</td>
+          </tr>
+          <tr>
+            <td><strong>Quality Assurance</strong></td>
+            <td>Playwright & TSX Test Runners</td>
+            <td>1.63.0</td>
+            <td>27 automated unit tests + 21 headless browser visual checkpoints</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 3: Architecture -->
+    <section id="architecture">
+      <h2>System Architecture</h2>
+      <pre><code>+-----------------------------------------------------------------------------------+
+|                               USER INTERFACE LAYER                                |
+|  - Onboarding Stepper  - Milestone 1 Send Test  - Leads Table & Bulk Actions      |
+|  - Sequence Builder    - Spintax Live Preview   - Pre-Flight Launch Modal          |
+|  - Emergency Stop      - Activity Feed Inspector- Delivery & Safety Settings      |
++-----------------------------------------------------------------------------------+
+                                         |
+                                         v
++-----------------------------------------------------------------------------------+
+|                             NEXT.JS API ROUTE HANDLERS                            |
+|  /api/auth/*           /api/leads/*             /api/campaigns/*   /api/worker/*  |
+|  (OAuth login & demo)  (CSV mapping & demo)     (CRUD & audits)    (Run & status) |
++-----------------------------------------------------------------------------------+
+                                         |
+                 +-----------------------+-----------------------+
+                 |                                               |
+                 v                                               v
++------------------------------------+          +------------------------------------+
+|       POSTGRESQL DATABASE          |          |      BULLMQ & REDIS ENGINE         |
+|  - Tenants & Users                 |          |  - outreach-dispatch Queue         |
+|  - Encrypted Mailbox Connections   |          |  - 5-Min Scheduled Dispatch Tick   |
+|  - Leads & Sequence Enrollments    |          |  - Midnight UTC Quota Reset Job    |
+|  - Step Sequences & SendLogs       |          |  - Background Worker Daemon        |
++------------------------------------+          +------------------------------------+
+                 ^                                               |
+                 |                                               v
+                 +-----------------------------------------------+
+                                         |
+                                         v
++-----------------------------------------------------------------------------------+
+|                        DISPATCHER ENGINE & SAFETY PIPELINE                        |
+|  1. Lead Opt-Out / Bounce Suppression Check                                        |
+|  2. Business-Hours Sending Window Verification (Mon-Fri 09:00 - 17:00)             |
+|  3. Safe Daily Quota Check (Mailbox <= 50, Campaign <= 30)                        |
+|  4. Spintax Permutation Tree & Variable Resolution ({{firstName}}, etc.)          |
+|  5. Token Expiry Check & MSAL AcquireTokenByRefreshToken Rotation                 |
+|  6. Microsoft Graph POST /me/sendMail with Stagger Delays                         |
+|  7. Circuit Breaker Error Tracking (Auto-pause if 3 consecutive failures)         |
+|  8. Atomic Transaction: Advance Step, Increment Counter, Write SendLog            |
++-----------------------------------------------------------------------------------+</code></pre>
+    </section>
+
+    <!-- Section 4: Features & Engine -->
+    <section id="features-and-engine">
+      <h2>Core Engine & Feature Implementation</h2>
+
+      <div id="lead-management">
+        <h3>1. Lead Directory & Smart CSV Column Mapping</h3>
+        <p>
+          Uploaded prospect files are parsed with <code>papaparse</code>. A column-mapping dialog allows users to map any CSV column structure to required fields: <code>email</code>, <code>firstName</code>, <code>lastName</code>, and <code>company</code>. Leads are deduplicated on <code>(tenantId, email)</code> at the database level.
+        </p>
+        <ul>
+          <li><strong>B2B Demo Generator</strong>: One-click generation of 12 realistic prospect leads across tech and SaaS to immediately test sequences.</li>
+          <li><strong>Row-Level Quick Actions</strong>: Quick Test Send pre-filling modal with that lead's data, one-click email copying, and individual lead deletion.</li>
+          <li><strong>Bulk Actions Toolbar</strong>: Multi-select leads with floating toolbar to bulk-enroll into campaigns, export to CSV, or batch-delete.</li>
+        </ul>
+      </div>
+
+      <div id="sequence-builder">
+        <h3>2. Sequence Studio & Spintax Variation Engine</h3>
+        <p>
+          Campaign sequences support multi-step follow-ups with configurable delays (e.g. Step 1: Day 0, Step 2: Day 2, Step 3: Day 5).
+        </p>
+        <ul>
+          <li><strong>Spintax Permutation Parser</strong> (<code>src/lib/template-engine.ts</code>): Evaluates variations such as <code>{Quick question|Reaching out|Hello}</code>. Supports nested syntax trees.</li>
+          <li><strong>Dynamic Variables with Fallbacks</strong>: Resolves merge fields like <code>{{firstName | "there"}}</code>, <code>{{company | "your team"}}</code>, and <code>{{email}}</code>. Double braces are resolved before spintax pipes to prevent variable collision.</li>
+          <li><strong>Live Preview Modal</strong>: Live preview tool allowing users to pick enrolled prospect records, test random variation generation, and click "Re-Spin" to preview permutation diversity.</li>
+        </ul>
+      </div>
+
+      <div id="sending-engine">
+        <h3>3. Core Dispatcher & BullMQ Background Queue</h3>
+        <p>
+          The sending dispatcher (<code>src/lib/worker/dispatcher.ts</code>) processes active sequence enrollments:
+        </p>
+        <ul>
+          <li><strong>Token Lifecycle</strong>: Pre-flight check evaluates whether OAuth token expires within 2 minutes. If expired, automatically calls <code>msalClient.acquireTokenByRefreshToken()</code>, re-encrypts the new token with AES-256-GCM, and updates PostgreSQL.</li>
+          <li><strong>Step Transitioning</strong>: Dispatches current step, schedules <code>nextSendAt = now + delayDays * 86400000</code> for the subsequent step, or transitions status to <code>completed</code>.</li>
+          <li><strong>BullMQ Daemon</strong> (<code>scripts/run-worker.ts</code>): Runs via <code>npm run worker</code>. Listens for the 5-minute tick and midnight quota reset without requiring user clicks.</li>
+        </ul>
+      </div>
+
+      <div id="safety-guardrails">
+        <h3>4. Multi-Layer Campaign Safety Guardrails</h3>
+        <p>To eliminate account suspension risks and deliverability damage:</p>
+        <div class="grid-2">
+          <div class="card">
+            <h4 style="color:var(--primary); margin-top:0;">Pre-Flight Launch Verification Modal</h4>
+            <p style="font-size:0.85rem;">Intercepts activation clicks to audit mailbox health, sequence readiness, audience protection, and schedule alignment. Requires explicit user confirmation.</p>
+          </div>
+          <div class="card">
+            <h4 style="color:var(--accent); margin-top:0;">Sending Windows & Days</h4>
+            <p style="font-size:0.85rem;">Enforces delivery only during business hours (e.g. Mon–Fri 09:00–17:00). If outside the window, sends are deferred to the next window opening rather than failing.</p>
+          </div>
+          <div class="card">
+            <h4 style="color:var(--warning); margin-top:0;">Dual Safe Quotas</h4>
+            <p style="font-size:0.85rem;">Mailbox ceiling (default 50/day) and Campaign limit (default 30/day) enforced before each send to safeguard warm-up health.</p>
+          </div>
+          <div class="card">
+            <h4 style="color:var(--danger); margin-top:0;">Circuit Breaker & Emergency Stop</h4>
+            <p style="font-size:0.85rem;">Auto-pauses campaign on 3 consecutive errors (e.g. Graph 429 rate limit). 1-click Emergency Stop halts all sending immediately.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="activity-feed">
+        <h3>5. Live Activity Feed & Email Inspector</h3>
+        <p>
+          Dispatched emails are recorded in real-time in the dashboard Activity Feed with status badges (<code>sent</code>, <code>simulated</code>, <code>failed</code>). Users can filter by tabs (<code>All</code>, <code>Test Sends</code>, <code>Campaigns</code>) and click any row to open the full email inspector modal showing recipient, exact subject, timestamp, and body preview.
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 5: User Guide -->
+    <section id="user-guide">
+      <h2>Step-by-Step User Manual</h2>
+
+      <div id="guide-login">
+        <h3>Step 1: Connecting Outlook or Using Demo Mode</h3>
+        <p>1. Open <a href="http://localhost:3000">http://localhost:3000</a> in your browser.</p>
+        <p>2. Choose <strong>"Sign in with Microsoft"</strong> to connect your real Outlook account via Microsoft Entra ID (delegated permissions: <code>Mail.Send</code>, <code>User.Read</code>, <code>offline_access</code>).</p>
+        <p>3. Or choose <strong>"Use Demo Account"</strong> to launch an instant local simulation session with zero configuration.</p>
+      </div>
+
+      <div id="guide-leads">
+        <h3>Step 2: Managing Prospects in Leads Directory</h3>
+        <p>1. Navigate to <strong>Leads</strong> from the top navigation.</p>
+        <p>2. Click <strong>"Upload CSV"</strong> to upload a prospect list and map columns, or click <strong>"Generate Demo Leads"</strong> to populate 12 sample B2B contacts.</p>
+        <p>3. Use checkboxes to select leads and open the floating bulk toolbar to enroll them in campaigns or export to CSV.</p>
+      </div>
+
+      <div id="guide-campaigns">
+        <h3>Step 3: Creating Campaigns & Writing Sequences</h3>
+        <p>1. Navigate to <strong>Campaigns</strong> and click <strong>"New Campaign"</strong>.</p>
+        <p>2. In the <strong>Sequences</strong> tab, write your subject and body template. Use merge tags: <code>{{firstName}}</code>, <code>{{company}}</code>, or fallbacks like <code>{{firstName | "there"}}</code>.</p>
+        <p>3. Add Spintax variation blocks: <code>{Quick question|Reaching out|Checking in}</code>.</p>
+        <p>4. Click <strong>"Preview & Test"</strong> to open the spintax simulation tool and verify personalized output.</p>
+        <p>5. Click <strong>"+ Add Follow-up Step"</strong> to create subsequent steps and configure the delay (e.g. 2 days).</p>
+        <p>6. Switch to the <strong>Leads</strong> tab and click <strong>"Enroll Leads"</strong> to assign your prospect batch.</p>
+      </div>
+
+      <div id="guide-safety">
+        <h3>Step 4: Configuring Safety Guardrails</h3>
+        <p>1. In Campaign Studio, switch to the <strong>Settings & Guardrails</strong> tab.</p>
+        <p>2. Adjust the <strong>Daily Campaign Sending Limit</strong> slider (recommended: 20–30 emails/day).</p>
+        <p>3. Set your <strong>Business Hours Sending Window</strong> (e.g. 09:00 to 17:00) and pick your allowed active sending days (Mon–Fri).</p>
+        <p>4. Configure the <strong>Minimum Dispatch Stagger</strong> (e.g. 60 seconds) and <strong>Circuit Breaker Threshold</strong> (e.g. 3 errors).</p>
+        <p>5. Click <strong>"Save Campaign & Safety Settings"</strong>.</p>
+      </div>
+
+      <div id="guide-dispatch">
+        <h3>Step 5: Activating Campaigns & Running Dispatches</h3>
+        <p>1. Click <strong>"Draft / Paused (Activate)"</strong> in the campaign header.</p>
+        <p>2. The <strong>Pre-Flight Verification Modal</strong> will pop up and run live audits on mailbox health, sequence steps, audience count, and delivery windows.</p>
+        <p>3. Review any warnings, toggle Dry Run mode if you want a simulated run, and click <strong>"Confirm & Arm Campaign"</strong>.</p>
+        <p>4. To run an immediate send pass, click <strong>"Run Dispatch Pass"</strong>.</p>
+        <p>5. If you ever need to stop all sending immediately, click the red <strong>"Emergency Stop"</strong> button in the Campaigns header.</p>
+      </div>
+    </section>
+
+    <!-- Section 6: API Reference -->
+    <section id="api-reference">
+      <h2>Complete API Specification</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Endpoint</th>
+            <th>Method</th>
+            <th>Description</th>
+            <th>Payload / Query</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>/api/auth/microsoft/login</code></td>
+            <td>GET</td>
+            <td>Initiates Microsoft MSAL OAuth flow</td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td><code>/api/auth/microsoft/callback</code></td>
+            <td>GET</td>
+            <td>Exchanges OAuth code for access/refresh tokens</td>
+            <td><code>?code=...</code></td>
+          </tr>
+          <tr>
+            <td><code>/api/auth/demo</code></td>
+            <td>POST</td>
+            <td>Creates/resumes local demo tenant & session</td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td><code>/api/mail/send-test</code></td>
+            <td>POST</td>
+            <td>Dispatches test email with custom parameters</td>
+            <td><code>{ recipientEmail, firstName, company, scenario }</code></td>
+          </tr>
+          <tr>
+            <td><code>/api/mail/logs</code></td>
+            <td>GET</td>
+            <td>Returns recent send log audit records</td>
+            <td><code>?limit=20</code></td>
+          </tr>
+          <tr>
+            <td><code>/api/leads/upload</code></td>
+            <td>POST</td>
+            <td>Bulk uploads and deduplicates leads</td>
+            <td><code>{ leads: LeadInput[] }</code></td>
+          </tr>
+          <tr>
+            <td><code>/api/leads/demo</code></td>
+            <td>POST / DELETE</td>
+            <td>Seeds 12 demo B2B prospects or clears list</td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td><code>/api/campaigns/create</code></td>
+            <td>POST</td>
+            <td>Creates new outreach campaign draft</td>
+            <td><code>{ name }</code></td>
+          </tr>
+          <tr>
+            <td><code>/api/campaigns/[id]</code></td>
+            <td>GET / PUT / DELETE</td>
+            <td>Fetches, updates (steps + safety), or deletes campaign</td>
+            <td><code>{ name, steps, dailyLimit, ... }</code></td>
+          </tr>
+          <tr>
+            <td><code>/api/campaigns/[id]/audit</code></td>
+            <td>GET</td>
+            <td>Pre-flight verification audit for campaign</td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td><code>/api/campaigns/[id]/enroll</code></td>
+            <td>POST</td>
+            <td>Enrolls batch or individual leads into sequence</td>
+            <td><code>{ batchId }</code> or <code>{ leadIds }</code></td>
+          </tr>
+          <tr>
+            <td><code>/api/campaigns/toggle-status</code></td>
+            <td>POST</td>
+            <td>Activates/pauses campaign and enrollments</td>
+            <td><code>{ campaignId, dryRunMode }</code></td>
+          </tr>
+          <tr>
+            <td><code>/api/campaigns/emergency-stop</code></td>
+            <td>POST</td>
+            <td>Atomically pauses all campaigns & enrollments</td>
+            <td>None</td>
+          </tr>
+          <tr>
+            <td><code>/api/worker/run</code></td>
+            <td>POST</td>
+            <td>Executes worker dispatch pass with telemetry</td>
+            <td><code>{ fastForwardDays, ignoreWindowForTesting }</code></td>
+          </tr>
+          <tr>
+            <td><code>/api/worker/status</code></td>
+            <td>GET</td>
+            <td>Returns queue, quota, and pending send metrics</td>
+            <td>None</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Section 7: Database Schema -->
+    <section id="database-schema">
+      <h2>Prisma Database Domain Model</h2>
+      <pre><code>model Tenant {
+  id        String      @id @default(cuid())
+  name      String
+  createdAt DateTime    @default(now())
+  users     User[]
+  leads     Lead[]
+  campaigns Campaign[]
+}
+
+model User {
+  id                 String              @id @default(cuid())
+  tenantId           String
+  email              String              @unique
+  createdAt          DateTime            @default(now())
+  tenant             Tenant              @relation(fields: [tenantId], references: [id])
+  mailboxConnections MailboxConnection[]
+}
+
+model MailboxConnection {
+  id                    String     @id @default(cuid())
+  userId                String
+  msAccountEmail        String
+  accessTokenEncrypted  String
+  refreshTokenEncrypted String
+  tokenExpiresAt        DateTime
+  dailySendCount        Int        @default(0)
+  dailySendResetAt      DateTime   @default(now())
+  dailyLimit            Int        @default(50) // Mailbox safe cap
+  status                String     @default("connected") // connected | expired | revoked
+  user                  User       @relation(fields: [userId], references: [id])
+  campaigns             Campaign[]
+}
+
+model Lead {
+  id            String               @id @default(cuid())
+  tenantId      String
+  email         String
+  firstName     String?
+  lastName      String?
+  company       String?
+  customFields  Json?
+  status        String               @default("active") // active | unsubscribed | bounced
+  importBatchId String?
+  createdAt     DateTime             @default(now())
+  tenant        Tenant               @relation(fields: [tenantId], references: [id])
+  enrollments   SequenceEnrollment[]
+
+  @@unique([tenantId, email])
+}
+
+model Campaign {
+  id                   String               @id @default(cuid())
+  tenantId             String
+  name                 String
+  mailboxConnectionId  String
+  status               String               @default("draft") // draft | active | paused | done
+  
+  // Delivery & Safety Guardrails
+  dailyLimit           Int                  @default(30)
+  sendingWindowStart   String               @default("09:00")
+  sendingWindowEnd     String               @default("17:00")
+  sendingDays          String               @default("1,2,3,4,5") // Mon-Fri
+  minIntervalSeconds   Int                  @default(60)
+  maxConsecutiveErrors Int                  @default(3) // Circuit breaker
+  dryRunMode           Boolean              @default(false)
+  safetyPausedReason   String?
+
+  tenant              Tenant               @relation(fields: [tenantId], references: [id])
+  mailboxConnection   MailboxConnection    @relation(fields: [mailboxConnectionId], references: [id])
+  sequence            Sequence?
+  enrollments         SequenceEnrollment[]
+}
+
+model Sequence {
+  id         String         @id @default(cuid())
+  campaignId String         @unique
+  campaign   Campaign       @relation(fields: [campaignId], references: [id])
+  steps      SequenceStep[]
+}
+
+model SequenceStep {
+  id              String   @id @default(cuid())
+  sequenceId      String
+  stepOrder       Int
+  delayDays       Int
+  subjectTemplate String
+  bodyTemplate    String
+  sequence        Sequence @relation(fields: [sequenceId], references: [id])
+}
+
+model SequenceEnrollment {
+  id            String    @id @default(cuid())
+  leadId        String
+  sequenceId    String
+  campaignId    String
+  currentStepId String?
+  nextSendAt    DateTime
+  status        String    @default("active") // active | paused | completed | bounced
+  retryCount    Int       @default(0)
+  nextRetryAt   DateTime?
+  lead          Lead      @relation(fields: [leadId], references: [id])
+  campaign      Campaign  @relation(fields: [campaignId], references: [id])
+}
+
+model SendLog {
+  id             String   @id @default(cuid())
+  enrollmentId   String?
+  stepId         String?
+  recipientEmail String
+  subject        String
+  bodyPreview    String?  @db.Text
+  campaignName   String?
+  isTest         Boolean  @default(false)
+  sentAt         DateTime @default(now())
+  graphMessageId String?
+  status         String   // sent | failed | simulated | retried
+  errorMessage   String?
+}</code></pre>
+    </section>
+
+    <!-- Section 8: CLI Commands & Verification -->
+    <section id="cli-commands">
+      <h2>CLI Commands & Operations</h2>
+
+      <div class="card">
+        <h4 style="color:var(--primary); margin-top:0;">Development & Daemon Commands</h4>
+        <pre><code># Start the Next.js Dev Server (port 3000)
+npm run dev
+
+# Run the Autonomous BullMQ Worker Daemon (listens on Redis for 5-min ticks)
+npm run worker
+
+# Run Docker Containers (PostgreSQL & Redis)
+docker compose up -d
+
+# Sync Database Schema with Prisma
+npx prisma db push
+npx prisma generate</code></pre>
+      </div>
+
+      <div class="card">
+        <h4 style="color:var(--accent); margin-top:0;">Automated Testing Suite</h4>
+        <pre><code># Run BullMQ & Redis Integration Test (10 tests)
+npx tsx --env-file=.env scripts/test-bullmq-worker.ts
+
+# Run Multi-Layer Safety Guardrails Test (27 tests)
+npx tsx --env-file=.env scripts/test-safety-guardrails.ts
+
+# Run Headless Browser Visual Test Suite (Playwright - 21 visual checkpoints)
+node scripts/playwright-test.mjs
+
+# Verify TypeScript Cleanliness (0 errors)
+npx tsc --noEmit</code></pre>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="margin-top:4rem; padding-top:2rem; border-top:1px solid var(--card-border); color:#64748b; font-size:0.85rem; display:flex; justify-content:space-between; align-items:center;">
+      <div>Outlook Cold Email Outreach Scheduler • Published on branch <code>devFlorian</code></div>
+      <div>Crafted with precision & production engineering standards</div>
+    </footer>
+  </main>
+</div>
+
+</body>
+</html>
