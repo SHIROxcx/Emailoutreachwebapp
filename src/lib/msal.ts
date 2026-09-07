@@ -9,23 +9,34 @@ export const GRAPH_SCOPES = [
 
 export const REDIRECT_URI = `${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/api/auth/microsoft/callback`;
 
-function buildMsalClient(): ConfidentialClientApplication {
-  const clientId = process.env.MS_CLIENT_ID;
-  const clientSecret = process.env.MS_CLIENT_SECRET;
-  if (!clientId || !clientSecret) {
-    throw new Error("MS_CLIENT_ID and MS_CLIENT_SECRET must be set");
+let _msalClient: ConfidentialClientApplication | null = null;
+
+export function getMsalClient(): ConfidentialClientApplication {
+  if (!_msalClient) {
+    const clientId = process.env.MS_CLIENT_ID;
+    const clientSecret = process.env.MS_CLIENT_SECRET;
+    if (!clientId || !clientSecret) {
+      throw new Error("MS_CLIENT_ID and MS_CLIENT_SECRET must be set");
+    }
+    const tenant = process.env.MS_TENANT_ID ?? "consumers";
+    _msalClient = new ConfidentialClientApplication({
+      auth: {
+        clientId,
+        clientSecret,
+        authority: `https://login.microsoftonline.com/${tenant}`,
+      },
+    });
   }
-  const tenant = process.env.MS_TENANT_ID ?? "consumers";
-  return new ConfidentialClientApplication({
-    auth: {
-      clientId,
-      clientSecret,
-      authority: `https://login.microsoftonline.com/${tenant}`,
-    },
-  });
+  return _msalClient;
 }
 
-export const msalClient = buildMsalClient();
+export const msalClient = new Proxy({} as ConfidentialClientApplication, {
+  get(_target, prop) {
+    const client = getMsalClient();
+    const val = (client as unknown as Record<string | symbol, unknown>)[prop];
+    return typeof val === "function" ? val.bind(client) : val;
+  },
+});
 
 export function extractRefreshTokenFromCache(): string | null {
   const serialized = msalClient.getTokenCache().serialize();
