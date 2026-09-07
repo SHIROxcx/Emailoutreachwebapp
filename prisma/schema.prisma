@@ -103,10 +103,15 @@ model SequenceEnrollment {
 
 model SendLog {
   id             String   @id @default(cuid())
-  enrollmentId   String
-  stepId         String
+  enrollmentId   String?
+  stepId         String?
+  recipientEmail String
+  subject        String
+  bodyPreview    String?  @db.Text
+  campaignName   String?
+  isTest         Boolean  @default(false)
   sentAt         DateTime @default(now())
   graphMessageId String?
-  status         String // sent | failed | retried
+  status         String // sent | failed | simulated | retried
   errorMessage   String?
 }

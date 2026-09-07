@@ -85,11 +85,26 @@ export async function POST(request: NextRequest) {
       messageId = `graph_${Date.now()}`;
     }
 
-    // Increment daily send count and log dispatch
+    // Increment daily send count
     const updated = await prisma.mailboxConnection.update({
       where: { id: connection.id },
       data: {
         dailySendCount: { increment: 1 },
+      },
+    });
+
+    // Record send log entry for full dashboard activity visibility
+    const sendLog = await prisma.sendLog.create({
+      data: {
+        recipientEmail: toEmail,
+        subject: subject || "Test Email from Outreach Scheduler",
+        bodyPreview: bodyText || "Hello! This is a test message confirming your Outlook connection works.",
+        campaignName: null,
+        isTest: true,
+        enrollmentId: null,
+        stepId: null,
+        graphMessageId: messageId,
+        status: isDemo ? "simulated" : "sent",
       },
     });
 
@@ -100,6 +115,17 @@ export async function POST(request: NextRequest) {
       dailyLimit: DAILY_LIMIT,
       isDemo,
       sentTo: toEmail,
+      log: {
+        id: sendLog.id,
+        recipientEmail: sendLog.recipientEmail,
+        subject: sendLog.subject,
+        bodyPreview: sendLog.bodyPreview,
+        campaignName: sendLog.campaignName,
+        isTest: sendLog.isTest,
+        sentAt: sendLog.sentAt.toISOString(),
+        graphMessageId: sendLog.graphMessageId,
+        status: sendLog.status,
+      },
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to send email";

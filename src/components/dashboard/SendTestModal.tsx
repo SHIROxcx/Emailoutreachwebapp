@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { SendLogItem } from "./EmailDetailModal";
 
 interface SendTestModalProps {
   isOpen: boolean;
   onClose: () => void;
   senderEmail: string;
-  onSendSuccess: (newCount: number) => void;
+  onSendSuccess: (newCount: number, newLog?: SendLogItem) => void;
 }
 
 export function SendTestModal({
@@ -15,7 +16,7 @@ export function SendTestModal({
   senderEmail,
   onSendSuccess,
 }: SendTestModalProps) {
-  const [toEmail, setToEmail] = useState(senderEmail);
+  const [toEmail, setToEmail] = useState("monteflorian88@gmail.com");
   const [subject, setSubject] = useState("Test Email from Outreach Scheduler");
   const [bodyText, setBodyText] = useState(
     "Hello! This test confirms that your Outlook sending pipeline is working properly via Microsoft Graph.",
@@ -27,12 +28,12 @@ export function SendTestModal({
     isDemo: boolean;
   } | null>(null);
 
-  // Sync recipient when senderEmail changes
+  // Sync recipient if toEmail is empty
   useEffect(() => {
-    if (senderEmail && !toEmail) {
-      setToEmail(senderEmail);
+    if (!toEmail) {
+      setToEmail("monteflorian88@gmail.com");
     }
-  }, [senderEmail, toEmail]);
+  }, [toEmail]);
 
   // Handle ESC key to close
   const handleKeyDown = useCallback(
@@ -78,7 +79,7 @@ export function SendTestModal({
       });
 
       if (typeof data.dailySendCount === "number") {
-        onSendSuccess(data.dailySendCount);
+        onSendSuccess(data.dailySendCount, data.log);
       }
     } catch (err) {
       setErrorMessage(

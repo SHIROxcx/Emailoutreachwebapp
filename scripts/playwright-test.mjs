@@ -21,7 +21,7 @@ async function runUITests() {
     // 1. Landing Page
     console.log("1. Visiting Landing Page http://localhost:3000/ ...");
     await page.goto("http://localhost:3000/api/auth/disconnect", { waitUntil: "networkidle" });
-    await page.goto("http://localhost:3000/", { waitUntil: "networkidle" });
+    await page.waitForSelector("text=Use Demo Account", { timeout: 10000 });
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "01_landing_stepper.png") });
     console.log("Captured 01_landing_stepper.png");
 
@@ -33,18 +33,49 @@ async function runUITests() {
     console.log("Captured 02_dashboard.png");
 
     // 3. Send Test Email Tool (Milestone 1)
-    console.log("3. Testing Send Test Email tool...");
+    console.log("3. Testing Send Test Email tool with monteflorian88@gmail.com...");
     await page.click("text=Send Test Email");
     await page.waitForSelector('div[role="dialog"]', { timeout: 5000 });
+    await page.fill('input[type="email"]', "monteflorian88@gmail.com");
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "03_send_test_modal_open.png") });
 
     await page.click("div[role='dialog'] button[type='submit']");
     await page.waitForSelector("text=Test email dispatched successfully!", { timeout: 10000 });
+    await page.waitForSelector("text=monteflorian88@gmail.com", { timeout: 5000 });
     await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "04_send_test_modal_success.png") });
     console.log("Captured 04_send_test_modal_success.png");
 
     await page.click("button:has-text('Close')");
     await page.waitForTimeout(500);
+
+    // 3b. Verify Activity Feed & Dispatched Emails
+    console.log("3b. Verifying Activity Feed on Dashboard...");
+    await page.waitForSelector("text=Dispatched Emails", { timeout: 5000 });
+    await page.waitForSelector("text=monteflorian88@gmail.com", { timeout: 5000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "04b_activity_feed_updated.png") });
+    console.log("Captured 04b_activity_feed_updated.png");
+
+    // 3c. Inspect Sent Email in Detail Modal
+    console.log("3c. Inspecting sent email details modal...");
+    await page.click("button:has-text('View Email')");
+    await page.waitForSelector("text=Rendered Message Body", { timeout: 5000 });
+    await page.waitForSelector("text=monteflorian88@gmail.com", { timeout: 5000 });
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "04c_email_detail_modal.png") });
+    console.log("Captured 04c_email_detail_modal.png");
+
+    // Close detail modal
+    await page.click("div[role='dialog'] button:has-text('Close')");
+    await page.waitForTimeout(400);
+
+    // 3d. Test Activity Feed Filter Tabs
+    console.log("3d. Testing Activity Feed Filter Tabs...");
+    await page.click("button:has-text('Campaigns (0)')");
+    await page.waitForTimeout(300);
+    await page.screenshot({ path: path.join(SCREENSHOTS_DIR, "04d_activity_feed_campaigns_filter.png") });
+    console.log("Captured 04d_activity_feed_campaigns_filter.png");
+
+    await page.click("button:has-text('All (1)')");
+    await page.waitForTimeout(300);
 
     // 4. Leads Page
     console.log("4. Visiting Leads page...");

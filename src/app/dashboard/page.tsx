@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { DashboardNav } from "@/components/dashboard/DashboardNav";
 import { DashboardView } from "@/components/dashboard/DashboardView";
 import { CampaignItem } from "@/components/dashboard/CampaignsOverview";
+import { SendLogItem } from "@/components/dashboard/EmailDetailModal";
 
 export const dynamic = "force-dynamic";
 
@@ -15,19 +16,30 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  // Fetch metrics and campaigns
-  const [totalLeadsCount, totalSentCount, campaignsRaw] = await Promise.all([
-    prisma.lead.count().catch(() => 0),
-    prisma.sendLog.count({ where: { status: "sent" } }).catch(() => 0),
-    prisma.campaign.findMany({
-      include: {
-        enrollments: {
-          select: { id: true, status: true },
-        },
-      },
-      orderBy: { id: "desc" },
-    }).catch(() => []),
-  ]);
+  // Fetch metrics, campaigns, and recent dispatches
+  const [totalLeadsCount, totalSentCount, campaignsRaw, recentLogsRaw] =
+    await Promise.all([
+      prisma.lead.count().catch(() => 0),
+      prisma.sendLog
+        .count({ where: { status: { in: ["sent", "simulated"] } } })
+        .catch(() => 0),
+      prisma.campaign
+        .findMany({
+          include: {
+            enrollments: {
+              select: { id: true, status: true },
+            },
+          },
+          orderBy: { id: "desc" },
+        })
+        .catch(() => []),
+      prisma.sendLog
+        .findMany({
+          orderBy: { sentAt: "desc" },
+          take: 25,
+        })
+        .catch(() => []),
+    ]);
 
   const campaigns: CampaignItem[] = campaignsRaw.map((c) => ({
     id: c.id,
@@ -39,6 +51,18 @@ export default async function DashboardPage() {
     createdAt: new Date().toISOString(),
   }));
 
+  const initialLogs: SendLogItem[] = recentLogsRaw.map((log) => ({
+    id: log.id,
+    recipientEmail: log.recipientEmail,
+    subject: log.subject,
+    bodyPreview: log.bodyPreview,
+    campaignName: log.campaignName,
+    isTest: log.isTest,
+    sentAt: log.sentAt.toISOString(),
+    graphMessageId: log.graphMessageId,
+    status: log.status,
+  }));
+
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black">
       <DashboardNav mailboxEmail={connection.msAccountEmail} />
@@ -47,6 +71,7 @@ export default async function DashboardPage() {
           mailboxEmail={connection.msAccountEmail}
           initialDailySendCount={connection.dailySendCount}
           initialCampaigns={campaigns}
+          initialLogs={initialLogs}
           totalLeadsCount={totalLeadsCount}
           totalSentCount={totalSentCount}
         />

@@ -7,9 +7,11 @@ const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export async function GET() {
   try {
-    await prisma.mailboxConnection.deleteMany({});
+    await prisma.mailboxConnection.updateMany({
+      data: { status: "disconnected" },
+    });
     return NextResponse.redirect(APP_URL);
-  } catch {
+  } catch (e) {
     return NextResponse.redirect(APP_URL);
   }
 }
