@@ -18,3 +18,34 @@ export async function getMyProfile(accessToken: string) {
     displayName?: string;
   };
 }
+
+export async function sendMail(
+  accessToken: string,
+  options: {
+    toEmail: string;
+    subject: string;
+    bodyText: string;
+    bodyHtml?: string;
+  },
+) {
+  const client = createGraphClient(accessToken);
+  const message = {
+    message: {
+      subject: options.subject,
+      body: {
+        contentType: options.bodyHtml ? "HTML" : "Text",
+        content: options.bodyHtml ?? options.bodyText,
+      },
+      toRecipients: [
+        {
+          emailAddress: {
+            address: options.toEmail,
+          },
+        },
+      ],
+    },
+    saveToSentItems: true,
+  };
+
+  return client.api("/me/sendMail").post(message);
+}
