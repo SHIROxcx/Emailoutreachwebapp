@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "worker": "tsx --env-file=.env scripts/run-worker.ts"
   },
   "dependencies": {
     "@azure/msal-node": "^6.0.0",
