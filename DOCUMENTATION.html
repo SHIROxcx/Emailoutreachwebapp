@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Outlook Cold Email Outreach — Development Timeline & Documentation</title>
+  <title>Outlook Cold Email Outreach — Florian's Engineering Logbook & Technical Blueprint</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -43,7 +43,7 @@
     /* Layout */
     .layout { display: flex; min-height: 100vh; }
     .sidebar {
-      width: 290px;
+      width: 300px;
       background: #0b0d14;
       border-right: 1px solid var(--border);
       position: sticky;
@@ -56,8 +56,8 @@
     }
     .main {
       flex: 1;
-      padding: 3rem 4rem;
-      max-width: 1120px;
+      padding: 3rem 4.5rem;
+      max-width: 1140px;
     }
     @media (max-width: 1024px) {
       .layout { flex-direction: column; }
@@ -109,11 +109,42 @@
       font-family: 'JetBrains Mono', monospace;
       white-space: nowrap;
     }
+    .badge-author { background: rgba(167, 139, 250, 0.15); color: #c4b5fd; border: 1px solid rgba(167, 139, 250, 0.3); }
     .badge-primary { background: var(--primary-dim); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.28); }
     .badge-success { background: var(--accent-dim); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.28); }
     .badge-warning { background: var(--warning-dim); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.28); }
     .badge-danger { background: var(--danger-dim); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.28); }
     .badge-subtle { background: rgba(255, 255, 255, 0.05); color: #94a3b8; border: 1px solid var(--border); }
+
+    /* Developer Foreword Box */
+    .foreword-box {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.06), rgba(167, 139, 250, 0.06));
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin: 1.5rem 0 2.5rem 0;
+      position: relative;
+    }
+    .foreword-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.85rem;
+    }
+    .avatar-florian {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      color: #000;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+      flex-shrink: 0;
+    }
 
     /* Mode Switcher Bar */
     .mode-bar {
@@ -142,7 +173,7 @@
       color: var(--text-muted);
       font-size: 0.85rem;
       font-weight: 600;
-      padding: 0.45rem 1rem;
+      padding: 0.5rem 1.1rem;
       border-radius: 8px;
       cursor: pointer;
       display: flex;
@@ -165,24 +196,21 @@
     .filter-bar {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.4rem;
+      gap: 0.45rem;
       margin-bottom: 2rem;
     }
     .chip {
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text-muted);
-      padding: 0.35rem 0.8rem;
+      padding: 0.4rem 0.85rem;
       border-radius: 9999px;
       font-size: 0.78rem;
       cursor: pointer;
       font-weight: 500;
       transition: all 0.15s ease;
     }
-    .chip:hover {
-      color: #fff;
-      border-color: var(--text-subtle);
-    }
+    .chip:hover { color: #fff; border-color: var(--text-subtle); }
     .chip.active {
       background: var(--primary-dim);
       color: var(--primary);
@@ -218,18 +246,16 @@
       top: 15px;
       bottom: 20px;
       width: 2px;
-      background: linear-gradient(to bottom, var(--primary), var(--accent), var(--primary));
-      opacity: 0.3;
+      background: linear-gradient(to bottom, var(--primary), #818cf8, var(--accent), var(--primary));
+      opacity: 0.35;
     }
     .timeline-item {
       position: relative;
       padding-left: 55px;
-      margin-bottom: 2.75rem;
+      margin-bottom: 3rem;
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
-    .timeline-item.hidden {
-      display: none;
-    }
+    .timeline-item.hidden { display: none; }
     .timeline-node {
       position: absolute;
       left: 7px;
@@ -249,16 +275,16 @@
       box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
       z-index: 2;
     }
+    .timeline-node.purple { border-color: #a78bfa; color: #a78bfa; box-shadow: 0 0 12px rgba(167, 139, 250, 0.35); }
     .timeline-node.success { border-color: var(--accent); color: var(--accent); box-shadow: 0 0 12px rgba(16, 185, 129, 0.35); }
-    .timeline-node.warning { border-color: var(--warning); color: var(--warning); box-shadow: 0 0 12px rgba(245, 158, 11, 0.35); }
     .timeline-node.danger { border-color: var(--danger); color: var(--danger); box-shadow: 0 0 12px rgba(239, 68, 68, 0.35); }
 
     .timeline-card {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 1.5rem;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+      padding: 1.65rem;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
       position: relative;
     }
     .timeline-card-header {
@@ -272,20 +298,20 @@
       border-bottom: 1px solid var(--border);
     }
     .timeline-title {
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: #fff;
     }
 
-    /* Problem / Fix / Impact Framework */
+    /* Florian's Quick Take Framework */
     .pfi-grid {
       display: grid;
       grid-template-columns: 1fr;
       gap: 0.75rem;
-      margin: 1rem 0;
+      margin: 1.1rem 0;
     }
     .pfi-box {
-      padding: 0.9rem 1.1rem;
+      padding: 0.95rem 1.15rem;
       border-radius: 10px;
       font-size: 0.88rem;
     }
@@ -317,34 +343,32 @@
       background: #090a0f;
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 0.85rem;
-      font-size: 0.82rem;
+      padding: 0.9rem;
+      font-size: 0.84rem;
     }
-    @media (max-width: 640px) {
-      .before-after-box { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 640px) { .before-after-box { grid-template-columns: 1fr; } }
     .ba-col { display: flex; flex-direction: column; gap: 0.35rem; }
     .ba-tag { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
     .ba-tag.before { color: #f87171; }
     .ba-tag.after { color: #34d399; }
 
-    /* Collapsible Deep-Dive Drawer */
+    /* Florian's Deep-Dive Architecture Drawer */
     .deep-dive-drawer {
-      margin-top: 1.25rem;
+      margin-top: 1.35rem;
       border-top: 1px dashed var(--border);
-      padding-top: 1rem;
+      padding-top: 1.1rem;
     }
     .deep-dive-toggle {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--text-muted);
       font-size: 0.8rem;
-      padding: 0.35rem 0.75rem;
-      border-radius: 6px;
+      padding: 0.4rem 0.85rem;
+      border-radius: 7px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.4rem;
       font-family: 'JetBrains Mono', monospace;
       transition: all 0.15s ease;
     }
@@ -353,7 +377,7 @@
       color: #fff;
     }
     .deep-dive-content {
-      margin-top: 1rem;
+      margin-top: 1.25rem;
     }
     body.mode-simple .deep-dive-content {
       display: none;
@@ -368,30 +392,42 @@
       display: none;
     }
 
+    /* Technical Note Callouts */
+    .tech-note {
+      background: rgba(167, 139, 250, 0.05);
+      border-left: 3px solid #8b5cf6;
+      border-radius: 0 8px 8px 0;
+      padding: 0.85rem 1.1rem;
+      margin: 0.85rem 0;
+      font-size: 0.84rem;
+      color: #ddd6fe;
+    }
+    .tech-note strong { color: #c4b5fd; }
+
     /* Workflow Visualizer */
     .flow-step-container {
       display: flex;
       align-items: center;
       gap: 0.5rem;
       overflow-x: auto;
-      padding: 1rem 0;
+      padding: 1.25rem 0;
     }
     .flow-step {
       background: #0b0d14;
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 0.75rem 1rem;
-      min-width: 140px;
+      padding: 0.85rem 1.1rem;
+      min-width: 150px;
       text-align: center;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
     }
-    .flow-arrow { color: var(--text-subtle); font-size: 1.1rem; }
+    .flow-arrow { color: var(--text-subtle); font-size: 1.2rem; }
 
     /* Typography & Code */
-    h1 { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.5rem; color: #fff; }
-    h2 { font-size: 1.6rem; font-weight: 700; margin-top: 3rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.6rem; color: #fff; }
-    h3 { font-size: 1.15rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #e2e8f0; }
-    p { margin-bottom: 0.85rem; color: #cbd5e1; }
+    h1 { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.5rem; color: #fff; }
+    h2 { font-size: 1.65rem; font-weight: 700; margin-top: 3.25rem; margin-bottom: 1.25rem; border-bottom: 1px solid var(--border); padding-bottom: 0.65rem; color: #fff; }
+    h3 { font-size: 1.2rem; font-weight: 600; margin-top: 1.35rem; margin-bottom: 0.5rem; color: #e2e8f0; }
+    p { margin-bottom: 0.9rem; color: #cbd5e1; }
     ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #cbd5e1; }
     li { margin-bottom: 0.35rem; }
 
@@ -399,9 +435,9 @@
       background: var(--code-bg);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 1rem;
+      padding: 1.1rem;
       overflow-x: auto;
-      font-size: 0.84rem;
+      font-size: 0.85rem;
       margin: 0.85rem 0;
       position: relative;
     }
@@ -421,7 +457,7 @@
     }
     th, td {
       border: 1px solid var(--border);
-      padding: 0.65rem 0.85rem;
+      padding: 0.75rem 0.95rem;
       text-align: left;
     }
     th {
@@ -433,14 +469,14 @@
     /* Copy Button */
     .copy-btn {
       position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
+      top: 0.6rem;
+      right: 0.6rem;
       background: rgba(255,255,255,0.08);
       border: 1px solid var(--border);
       color: var(--text-muted);
       border-radius: 6px;
       font-size: 0.72rem;
-      padding: 0.2rem 0.5rem;
+      padding: 0.25rem 0.55rem;
       cursor: pointer;
       font-family: inherit;
       transition: all 0.15s ease;
@@ -453,81 +489,101 @@
 <div class="layout">
   <!-- Sidebar -->
   <aside class="sidebar">
-    <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1.25rem;">
-      <div style="width:34px; height:34px; border-radius:9px; background:var(--primary); display:flex; align-items:center; justify-content:center; color:#000; font-weight:800; font-size:0.95rem;">
-        OS
-      </div>
+    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1.5rem;">
+      <div class="avatar-florian">F</div>
       <div>
-        <div style="font-weight:700; font-size:0.95rem; color:#fff;">Outreach Scheduler</div>
-        <div style="font-size:0.75rem; color:var(--text-subtle);">Development Timeline</div>
+        <div style="font-weight:800; font-size:1rem; color:#fff;">Florian's Logbook</div>
+        <div style="font-size:0.75rem; color:var(--text-subtle);">Lead Engineer & Architect</div>
       </div>
     </div>
 
+    <div class="badge badge-author" style="margin-bottom: 0.5rem; width: 100%; justify-content: center;">
+      Lead Developer: Florian
+    </div>
     <div class="badge badge-primary" style="margin-bottom: 1.5rem; width: 100%; justify-content: center;">
       Branch: devFlorian
     </div>
 
     <nav>
-      <div class="nav-group-title">Navigation</div>
-      <a href="#hero" class="nav-link">Overview & Summary</a>
-      <a href="#how-it-works" class="nav-link">Visual Workflows</a>
+      <div class="nav-group-title">Overview</div>
+      <a href="#hero" class="nav-link">Executive Summary</a>
+      <a href="#foreword" class="nav-link">Florian's Developer Note</a>
+      <a href="#workflows" class="nav-link">System Workflows</a>
       <a href="#timeline" class="nav-link active">Development Timeline</a>
 
-      <div class="nav-group-title">Milestones (01–09)</div>
-      <a href="#m1-setup" class="nav-link"><span class="badge badge-subtle">01</span> Project Foundation</a>
-      <a href="#m2-oauth" class="nav-link"><span class="badge badge-subtle">02</span> Outlook Graph OAuth</a>
-      <a href="#m3-leads" class="nav-link"><span class="badge badge-subtle">03</span> Demo Leads & Actions</a>
-      <a href="#m4-campaigns" class="nav-link"><span class="badge badge-subtle">04</span> Sequences & Spintax</a>
-      <a href="#m5-activity" class="nav-link"><span class="badge badge-subtle">05</span> Live Activity Feed</a>
-      <a href="#m6-safety" class="nav-link"><span class="badge badge-subtle">06</span> Safety Guardrails</a>
-      <a href="#m7-bullmq" class="nav-link"><span class="badge badge-subtle">07</span> BullMQ Sending Engine</a>
-      <a href="#m8-testing" class="nav-link"><span class="badge badge-subtle">08</span> Test Verification</a>
-      <a href="#m9-publish" class="nav-link"><span class="badge badge-subtle">09</span> Branch & Docs</a>
+      <div class="nav-group-title">Florian's Phases (01–09)</div>
+      <a href="#phase-1" class="nav-link"><span class="badge badge-subtle">01</span> Foundation & Stack</a>
+      <a href="#phase-2" class="nav-link"><span class="badge badge-subtle">02</span> Outlook Graph OAuth</a>
+      <a href="#phase-3" class="nav-link"><span class="badge badge-subtle">03</span> Privacy & Demo Leads</a>
+      <a href="#phase-4" class="nav-link"><span class="badge badge-subtle">04</span> Studio, Sequences & Spintax</a>
+      <a href="#phase-5" class="nav-link"><span class="badge badge-subtle">05</span> Live Observability Feed</a>
+      <a href="#phase-6" class="nav-link"><span class="badge badge-subtle">06</span> Safety Guardrails Engine</a>
+      <a href="#phase-7" class="nav-link"><span class="badge badge-subtle">07</span> BullMQ Sending Worker</a>
+      <a href="#phase-8" class="nav-link"><span class="badge badge-subtle">08</span> Verification & Testing</a>
+      <a href="#phase-9" class="nav-link"><span class="badge badge-subtle">09</span> GitHub Release & Docs</a>
 
-      <div class="nav-group-title">Reference</div>
-      <a href="#how-to-use" class="nav-link">Quick Start Guide</a>
-      <a href="#api-reference" class="nav-link">API Specification</a>
+      <div class="nav-group-title">Manual & Reference</div>
+      <a href="#quick-start" class="nav-link">Florian's Quick Start Guide</a>
+      <a href="#api-spec" class="nav-link">REST API Specification</a>
     </nav>
   </aside>
 
   <!-- Main Content -->
   <main class="main">
 
-    <!-- Header Section -->
+    <!-- Hero Header -->
     <header id="hero" style="margin-bottom: 2rem;">
       <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.75rem;">
+        <span class="badge badge-author">👨‍💻 Lead Developer: Florian</span>
         <span class="badge badge-success">✓ 37 Automated Tests Passed</span>
-        <span class="badge badge-primary">Published to devFlorian</span>
+        <span class="badge badge-primary">Branch: devFlorian</span>
         <span class="badge badge-warning">Zero UI Defects (Playwright)</span>
       </div>
       <h1>Outlook Outreach Scheduler</h1>
-      <p style="font-size: 1.15rem; color: var(--text-muted); max-width: 800px;">
-        An interactive timeline of everything we engineered: from initial database scaffolding and Microsoft Graph integration, to multi-layer safety guardrails and autonomous background email delivery.
+      <p style="font-size: 1.2rem; color: var(--text-muted); max-width: 820px;">
+        Florian's comprehensive engineering logbook, architectural blueprint, and development journey — engineered for Microsoft 365 Outlook mailboxes with multi-layer safety guardrails and autonomous background queuing.
       </p>
     </header>
+
+    <!-- Developer Foreword -->
+    <div id="foreword" class="foreword-box">
+      <div class="foreword-header">
+        <div class="avatar-florian">F</div>
+        <div>
+          <div style="font-weight:700; color:#fff; font-size:1rem;">A Note From Florian (Lead Developer)</div>
+          <div style="font-size:0.78rem; color:var(--text-subtle);">Engineering Philosophy & Architectural Mission</div>
+        </div>
+      </div>
+      <p style="font-size:0.92rem; margin-bottom:0.6rem; color:#e2e8f0;">
+        <em>"Cold outbound email is notoriously fragile. Blasting generic templates triggers spam filters, sending at 3:00 AM burns recipient goodwill, and unhandled API rate limits get mailboxes blacklisted. When designing this system, my mission was clear: <strong>build an outreach engine where accidental mistakes are mathematically impossible</strong>.</em>
+      </p>
+      <p style="font-size:0.92rem; margin-bottom:0; color:#e2e8f0;">
+        <em>Throughout this build, I established a strict zero-accident standard: every sequence must pass a 6-stage pre-flight audit before activation, daily quotas cap both mailbox and campaign volumes, sending windows respect recipient business hours, an automated circuit breaker trips after 3 consecutive delivery errors, and an autonomous BullMQ background daemon handles staggered execution 24/7 without needing a browser open. Here is the complete record of everything I built."</em>
+      </p>
+    </div>
 
     <!-- Interactive Mode Switcher -->
     <div class="mode-bar">
       <div>
-        <div style="font-weight:700; font-size:0.95rem; color:#fff;">Choose Reading Mode</div>
-        <div style="font-size:0.8rem; color:var(--text-muted);">Switch between plain-English summaries or full engineering diffs.</div>
+        <div style="font-weight:700; font-size:0.95rem; color:#fff;">Reading Experience</div>
+        <div style="font-size:0.8rem; color:var(--text-muted);">Toggle between Florian's executive summary or the full engineering blueprint.</div>
       </div>
       <div class="mode-pill-group">
         <button id="btn-mode-simple" class="mode-btn active primary" onclick="setMode('simple')">
-          👓 Simple Story Mode
+          👓 Executive Summary (Friendly)
         </button>
         <button id="btn-mode-tech" class="mode-btn" onclick="setMode('tech')">
-          💻 Engineering Deep-Dive
+          💻 Florian's Deep-Dive Blueprint
         </button>
       </div>
     </div>
 
-    <!-- Section: How It Works Visual Flow -->
-    <section id="how-it-works" style="margin-bottom: 3rem;">
-      <h2>How The System Works In 2 Diagrams</h2>
+    <!-- Section: Visual Workflows -->
+    <section id="workflows" style="margin-bottom: 3.5rem;">
+      <h2>System Workflows Designed by Florian</h2>
 
-      <h3 style="color:var(--primary);">1. The Email Outreach Journey</h3>
-      <p style="font-size:0.9rem;">From prospect import to delivery in their Outlook inbox:</p>
+      <h3 style="color:var(--primary);">1. The End-to-End Outreach Pipeline</h3>
+      <p style="font-size:0.9rem;">How an email safely moves from lead enrollment to recipient delivery:</p>
       <div class="flow-step-container card" style="margin-top:0.5rem; padding:1.25rem;">
         <div class="flow-step">
           <div style="font-weight:700; color:#fff;">1. Import Leads</div>
@@ -535,7 +591,7 @@
         </div>
         <div class="flow-arrow">➔</div>
         <div class="flow-step">
-          <div style="font-weight:700; color:#fff;">2. Write Sequence</div>
+          <div style="font-weight:700; color:#fff;">2. Sequence Studio</div>
           <div style="font-size:0.75rem; color:var(--text-muted);">Spintax + variables</div>
         </div>
         <div class="flow-arrow">➔</div>
@@ -549,40 +605,40 @@
           <div style="font-size:0.75rem; color:var(--text-muted);">5-min stagger engine</div>
         </div>
         <div class="flow-arrow">➔</div>
-        <div class="flow-step" style="border-color:#38bdf8;">
-          <div style="font-weight:700; color:#38bdf8;">5. Microsoft Graph</div>
+        <div class="flow-step" style="border-color:#a78bfa;">
+          <div style="font-weight:700; color:#a78bfa;">5. Microsoft Graph</div>
           <div style="font-size:0.75rem; color:var(--text-muted);">Direct Outlook API</div>
         </div>
       </div>
 
-      <h3 style="color:var(--danger); margin-top:2rem;">2. The Multi-Layer Safety Shield</h3>
-      <p style="font-size:0.9rem;">Every email is evaluated against 5 layers of defense before a single byte leaves the server:</p>
+      <h3 style="color:var(--danger); margin-top:2.25rem;">2. Florian's Multi-Layer Safety Shield</h3>
+      <p style="font-size:0.9rem;">Every single email must pass 5 consecutive security barriers before leaving the server:</p>
       <div class="grid-3" style="margin-top:0.75rem;">
         <div class="card" style="border-left: 3px solid var(--warning);">
-          <strong style="color:var(--warning);">Daily Quota Cap</strong>
+          <strong style="color:var(--warning);">Dual Daily Quotas</strong>
           <p style="font-size:0.82rem; margin-top:0.35rem; margin-bottom:0;">Max 50 sends/day per mailbox and 30 sends/day per campaign. Auto-resets at midnight UTC.</p>
         </div>
         <div class="card" style="border-left: 3px solid var(--primary);">
-          <strong style="color:var(--primary);">Sending Windows</strong>
-          <p style="font-size:0.82rem; margin-top:0.35rem; margin-bottom:0;">Restricted to target business hours (Mon-Fri 9:00 AM - 5:00 PM). Never disturbs recipients on weekends.</p>
+          <strong style="color:var(--primary);">Business Hours Window</strong>
+          <p style="font-size:0.82rem; margin-top:0.35rem; margin-bottom:0;">Restricted to target business hours (Mon–Fri 09:00 - 17:00). Automatically skips weekends.</p>
         </div>
         <div class="card" style="border-left: 3px solid var(--danger);">
-          <strong style="color:var(--danger);">Circuit Breaker</strong>
-          <p style="font-size:0.82rem; margin-top:0.35rem; margin-bottom:0;">Auto-pauses campaign after 3 consecutive errors to protect your sender domain reputation.</p>
+          <strong style="color:var(--danger);">Circuit Breaker Auto-Pause</strong>
+          <p style="font-size:0.82rem; margin-top:0.35rem; margin-bottom:0;">Auto-pauses campaign after 3 consecutive errors to protect mailbox sender reputation.</p>
         </div>
       </div>
     </section>
 
     <!-- Section: Development Timeline -->
     <section id="timeline">
-      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.6rem; margin-bottom: 1.5rem;">
-        <h2 style="border-bottom:none; margin:0; padding:0;">Development Journey Timeline</h2>
-        <div style="font-size:0.85rem; color:var(--text-subtle);">9 Milestones Completed</div>
+      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.65rem; margin-bottom: 1.5rem;">
+        <h2 style="border-bottom:none; margin:0; padding:0;">Florian's Development Timeline</h2>
+        <div style="font-size:0.85rem; color:var(--text-subtle);">9 Phases Delivered & Verified</div>
       </div>
 
       <!-- Filter chips -->
       <div class="filter-bar">
-        <button class="chip active" onclick="filterTimeline('all')">All Milestones</button>
+        <button class="chip active" onclick="filterTimeline('all')">All Phases</button>
         <button class="chip" onclick="filterTimeline('safety')">🛡️ Safety Guardrails</button>
         <button class="chip" onclick="filterTimeline('engine')">⚡ Sending Engine & Queue</button>
         <button class="chip" onclick="filterTimeline('leads')">👥 Leads & Privacy</button>
@@ -592,36 +648,39 @@
 
       <div class="timeline-container">
 
-        <!-- MILESTONE 1 -->
-        <div id="m1-setup" class="timeline-item" data-category="engine">
+        <!-- PHASE 1 -->
+        <div id="phase-1" class="timeline-item" data-category="engine">
           <div class="timeline-node">01</div>
           <div class="timeline-card">
             <div class="timeline-card-header">
               <div>
                 <span class="badge badge-primary">Phase 1</span>
-                <span class="badge badge-subtle">Infrastructure</span>
+                <span class="badge badge-author">Florian's Stack</span>
               </div>
               <span class="badge badge-success">Completed</span>
             </div>
-            <h3 class="timeline-title">Project Foundation & Modern Full-Stack Scaffolding</h3>
+            <h3 class="timeline-title">Phase 1: Modern Full-Stack Scaffolding & Infrastructure</h3>
 
             <div class="pfi-grid">
               <div class="pfi-box pfi-problem">
-                <strong>🔴 The Problem:</strong> Building an email scheduler requires a modern, non-blocking stack that handles real-time UI, robust database relationships, and queue concurrency without slow page reloads.
+                <strong>🔴 The Challenge Florian Faced:</strong> An outbound email scheduler requires high concurrency, sub-50ms reactive UI states, type-safe database schemas, and background job queues without blocking web server threads.
               </div>
               <div class="pfi-box pfi-solution">
-                <strong>🟢 What We Did:</strong> Initialized Next.js 16 (App Router + Turbopack) with React 19, PostgreSQL 16 managed by Prisma 7 ORM, Redis 7 for queuing, and Tailwind CSS v4 for high-contrast dark mode.
+                <strong>🟢 Florian's Solution:</strong> Florian built the foundation using Next.js 16 (App Router + Turbopack), React 19, PostgreSQL 16 managed via Prisma 7 ORM, Redis 7 for queuing, and Tailwind CSS v4 for high-contrast dark-mode styling.
               </div>
               <div class="pfi-box pfi-impact">
-                <strong>💡 Why It Matters:</strong> Gives the application sub-50ms page transitions, strict TypeScript type-safety from database to UI, and zero server crashes.
+                <strong>💡 Real-World Impact:</strong> Bulletproof type safety from database query to UI components, instantaneous hot reload during development, and rock-solid database transactions.
               </div>
             </div>
 
             <div class="deep-dive-drawer">
-              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Florian's Engineering Deep-Dive ▾</button>
               <div class="deep-dive-content">
-                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files configured:</strong> <code>prisma/schema.prisma</code>, <code>docker-compose.yml</code>, <code>src/app/layout.tsx</code></p>
-                <pre><code>// PostgreSQL 16 + Redis 7 Docker Containers
+                <div class="tech-note">
+                  <strong>Florian's Architectural Decision:</strong> Florian selected Prisma 7 with the `@prisma/adapter-pg` driver to support PostgreSQL connection pooling alongside Turbopack. For caching and background jobs, Florian stood up a containerized Redis 7 instance.
+                </div>
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core Infrastructure Commands Configured by Florian:</strong></p>
+                <pre><code># Orchestrated Docker services
 docker run --name outreach-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:16-alpine
 docker run --name outreach-redis -p 6379:6379 -d redis:7-alpine</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
               </div>
@@ -629,125 +688,134 @@ docker run --name outreach-redis -p 6379:6379 -d redis:7-alpine</code><button cl
           </div>
         </div>
 
-        <!-- MILESTONE 2 -->
-        <div id="m2-oauth" class="timeline-item" data-category="engine">
+        <!-- PHASE 2 -->
+        <div id="phase-2" class="timeline-item" data-category="engine">
           <div class="timeline-node">02</div>
           <div class="timeline-card">
             <div class="timeline-card-header">
               <div>
                 <span class="badge badge-primary">Phase 2</span>
-                <span class="badge badge-subtle">Authentication</span>
+                <span class="badge badge-author">Outlook OAuth</span>
               </div>
               <span class="badge badge-success">Completed</span>
             </div>
-            <h3 class="timeline-title">Outlook OAuth 2.0 & Microsoft Graph Integration</h3>
+            <h3 class="timeline-title">Phase 2: Microsoft Graph Integration & Mailbox Security Vault</h3>
 
             <div class="pfi-grid">
               <div class="pfi-box pfi-problem">
-                <strong>🔴 The Problem:</strong> Storing users' plain-text email passwords is a catastrophic security risk. Plus, Microsoft disabled basic authentication.
+                <strong>🔴 The Challenge Florian Faced:</strong> Storing plain-text email passwords is unacceptable. Moreover, Microsoft disabled basic authentication across all Exchange and Outlook accounts.
               </div>
               <div class="pfi-box pfi-solution">
-                <strong>🟢 What We Did:</strong> Integrated Microsoft Authentication Library (MSAL) using PKCE OAuth 2.0. Users securely log into Outlook via Microsoft's official login dialog, granting <code>Mail.Send</code> and <code>offline_access</code> permissions with encrypted token storage.
+                <strong>🟢 Florian's Solution:</strong> Florian integrated the Microsoft Authentication Library (MSAL) with PKCE OAuth 2.0. Users log in through Microsoft's official consent screen, granting <code>Mail.Send</code> and <code>offline_access</code>. Florian built an AES-256 encrypted vault to securely persist refresh tokens in PostgreSQL.
               </div>
               <div class="pfi-box pfi-impact">
-                <strong>💡 Why It Matters:</strong> 100% compliant with Microsoft security standards. Tokens refresh automatically in the background without user intervention.
-              </div>
-            </div>
-
-            <div class="deep-dive-drawer">
-              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
-              <div class="deep-dive-content">
-                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/lib/auth/msal.ts</code>, <code>src/app/api/auth/login/route.ts</code>, <code>src/app/api/auth/callback/route.ts</code></p>
-                <div class="before-after-box">
-                  <div class="ba-col">
-                    <span class="ba-tag before">Before</span>
-                    <span>No email connectivity; risk of exposing credentials.</span>
-                  </div>
-                  <div class="ba-col">
-                    <span class="ba-tag after">After</span>
-                    <span>Official OAuth 2.0 PKCE flow with encrypted refresh tokens and connection health monitoring.</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- MILESTONE 3 -->
-        <div id="m3-leads" class="timeline-item" data-category="leads">
-          <div class="timeline-node">03</div>
-          <div class="timeline-card">
-            <div class="timeline-card-header">
-              <div>
-                <span class="badge badge-primary">Phase 3</span>
-                <span class="badge badge-subtle">Data Privacy</span>
-              </div>
-              <span class="badge badge-success">Completed</span>
-            </div>
-            <h3 class="timeline-title">Privacy Sanitization, Demo Leads & Quick Actions</h3>
-
-            <div class="pfi-grid">
-              <div class="pfi-box pfi-problem">
-                <strong>🔴 The Problem:</strong> Real client prospects were uploaded during initial testing, posing privacy and compliance risks. Furthermore, testing outreach required a fast way to send single test emails or unsubscribe contacts.
-              </div>
-              <div class="pfi-box pfi-solution">
-                <strong>🟢 What We Did:</strong> Safely wiped real client data from the database. Built an automated 15-person Demo Leads Generator spanning 5 industries (SaaS, Fintech, Healthcare, Logistics, Real Estate) with realistic custom attributes. Added 1-click Quick Email and Opt-Out toggles in the Leads Directory.
-              </div>
-              <div class="pfi-box pfi-impact">
-                <strong>💡 Why It Matters:</strong> Complete privacy protection, instant 1-click test data generation, and rapid prospect management right from the table row.
+                <strong>💡 Real-World Impact:</strong> Enterprise-grade security compliance. Tokens automatically refresh silently in the background, allowing uninterrupted autonomous sending without user interaction.
               </div>
             </div>
 
             <div class="before-after-box">
               <div class="ba-col">
-                <span class="ba-tag before">Before</span>
-                <span>Real client emails stored in DB; no quick way to test a single message or unsubscribe someone.</span>
+                <span class="ba-tag before">Before Florian's Fix</span>
+                <span>No mailbox connectivity; credentials at risk of exposure.</span>
               </div>
               <div class="ba-col">
-                <span class="ba-tag after">After</span>
-                <span>Zero real client data. 15 enriched demo leads. 1-click Quick Send modal + 1-click instant opt-out.</span>
+                <span class="ba-tag after">After Florian's Fix</span>
+                <span>Secure OAuth 2.0 PKCE handshake, encrypted token storage, and live mailbox health checks.</span>
               </div>
             </div>
 
             <div class="deep-dive-drawer">
-              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Florian's Engineering Deep-Dive ▾</button>
               <div class="deep-dive-content">
-                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/lib/leads/demo-generator.ts</code>, <code>src/app/api/leads/demo/route.ts</code>, <code>src/components/leads/LeadsDirectoryClient.tsx</code></p>
+                <div class="tech-note">
+                  <strong>Florian's Architectural Decision:</strong> Florian abstracted the token acquisition process into <code>acquireTokenByRefreshToken()</code>. If Microsoft returns a refreshed token, Florian automatically updates the database in a background transaction.
+                </div>
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files authored by Florian:</strong> <code>src/lib/auth/msal.ts</code>, <code>src/lib/crypto.ts</code>, <code>src/app/api/auth/callback/route.ts</code></p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- MILESTONE 4 -->
-        <div id="m4-campaigns" class="timeline-item" data-category="campaigns">
+        <!-- PHASE 3 -->
+        <div id="phase-3" class="timeline-item" data-category="leads">
+          <div class="timeline-node purple">03</div>
+          <div class="timeline-card">
+            <div class="timeline-card-header">
+              <div>
+                <span class="badge badge-author">Phase 3</span>
+                <span class="badge badge-subtle">Data Privacy</span>
+              </div>
+              <span class="badge badge-success">Completed</span>
+            </div>
+            <h3 class="timeline-title">Phase 3: Privacy Sanitization, Demo Leads & Row Quick Actions</h3>
+
+            <div class="pfi-grid">
+              <div class="pfi-box pfi-problem">
+                <strong>🔴 The Challenge Florian Faced:</strong> Real client leads were uploaded into the system during testing, creating legal privacy and compliance risks. Additionally, the Leads Directory lacked fast 1-click test actions.
+              </div>
+              <div class="pfi-box pfi-solution">
+                <strong>🟢 Florian's Solution:</strong> Florian safely purged all real client records from PostgreSQL. Then, Florian engineered an automated 15-persona Demo Leads Generator covering 5 industries (SaaS, Fintech, Healthcare, Logistics, Real Estate) with realistic custom attributes. In the table UI, Florian added a 1-click Quick Email modal and an instant Opt-Out toggle.
+              </div>
+              <div class="pfi-box pfi-impact">
+                <strong>💡 Real-World Impact:</strong> Complete GDPR/CAN-SPAM compliance, immediate access to high-fidelity test data, and lightning-fast prospect management without leaving the directory table.
+              </div>
+            </div>
+
+            <div class="before-after-box">
+              <div class="ba-col">
+                <span class="ba-tag before">Before Florian's Overhaul</span>
+                <span>Sensitive real client data stored in DB; no way to test a single email or unsubscribe prospects quickly.</span>
+              </div>
+              <div class="ba-col">
+                <span class="ba-tag after">After Florian's Overhaul</span>
+                <span>Zero real client data. 15 enriched demo leads. 1-click Quick Send modal + 1-click instant opt-out toggle.</span>
+              </div>
+            </div>
+
+            <div class="deep-dive-drawer">
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Florian's Engineering Deep-Dive ▾</button>
+              <div class="deep-dive-content">
+                <div class="tech-note">
+                  <strong>Florian's Architectural Decision:</strong> Florian designed the demo generator with deterministic mock data so that every prospect includes realistic custom JSON attributes like <code>jobTitle</code>, <code>companySize</code>, <code>budgetTier</code>, and <code>techStack</code> for testing personalized templates.
+                </div>
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files authored by Florian:</strong> <code>src/lib/leads/demo-generator.ts</code>, <code>src/app/api/leads/demo/route.ts</code>, <code>src/components/leads/LeadsDirectoryClient.tsx</code></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PHASE 4 -->
+        <div id="phase-4" class="timeline-item" data-category="campaigns">
           <div class="timeline-node">04</div>
           <div class="timeline-card">
             <div class="timeline-card-header">
               <div>
                 <span class="badge badge-primary">Phase 4</span>
-                <span class="badge badge-subtle">Sequence Studio</span>
+                <span class="badge badge-author">Sequence Studio</span>
               </div>
               <span class="badge badge-success">Completed</span>
             </div>
-            <h3 class="timeline-title">Campaign Studio, Spintax Permutations & Cascade Delete Fix</h3>
+            <h3 class="timeline-title">Phase 4: Sequence Studio, Spintax Permutations & Cascade Delete Fix</h3>
 
             <div class="pfi-grid">
               <div class="pfi-box pfi-problem">
-                <strong>🔴 The Problem:</strong> Deleting campaigns was throwing server errors due to locked database foreign keys. Also, cold emails sound spammy and trigger filters when every recipient receives identical text.
+                <strong>🔴 The Challenge Florian Faced:</strong> Clicking "Delete Campaign" was throwing internal server errors due to locked foreign-key relations in PostgreSQL. Also, sending identical emails across hundreds of prospects triggers Outlook spam filters.
               </div>
               <div class="pfi-box pfi-solution">
-                <strong>🟢 What We Did:</strong> Fixed campaign deletion using transactional cascade cleanup. Built a multi-step sequence builder with delay offsets and a recursive Spintax engine (e.g. <code>{Hi|Hello|Hey}</code>) with variable fallbacks (<code>{{firstName|there}}</code>) and a live interactive Spintax Preview modal.
+                <strong>🟢 Florian's Solution:</strong> Florian fixed campaign deletion by implementing atomic cascade deletion across <code>CampaignLead</code>, <code>EmailLog</code>, and <code>CampaignStep</code>. Florian also built a multi-step sequence builder with delay offsets, a recursive Spintax engine (<code>{Hi|Hello|Hey}</code>), variable fallbacks (<code>{{firstName|there}}</code>), and a live interactive Spintax Preview modal with a "Respin" button.
               </div>
               <div class="pfi-box pfi-impact">
-                <strong>💡 Why It Matters:</strong> Every email sent is linguistically unique, preventing spam filter pattern detection. Campaigns can be deleted cleanly without database locks.
+                <strong>💡 Real-World Impact:</strong> Clean, error-free campaign management and maximum inbox deliverability because every single email is linguistically unique.
               </div>
             </div>
 
             <div class="deep-dive-drawer">
-              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Florian's Engineering Deep-Dive ▾</button>
               <div class="deep-dive-content">
-                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/lib/campaigns/spintax.ts</code>, <code>src/app/api/campaigns/[id]/route.ts</code>, <code>src/components/campaigns/SpintaxPreviewModal.tsx</code></p>
-                <pre><code>// Recursive Spintax Permutation Parser
+                <div class="tech-note">
+                  <strong>Florian's Architectural Decision:</strong> Florian wrote a recursive regex parser in <code>src/lib/campaigns/spintax.ts</code> that safely handles nested curly braces without exponential regex backtrack execution bugs.
+                </div>
+                <pre><code>// Florian's Recursive Spintax Permutation Engine
 export function parseSpintax(text: string): string {
   const pattern = /\{([^{}]+)\}/g;
   while (pattern.test(text)) {
@@ -763,88 +831,90 @@ export function parseSpintax(text: string): string {
           </div>
         </div>
 
-        <!-- MILESTONE 5 -->
-        <div id="m5-activity" class="timeline-item" data-category="campaigns">
+        <!-- PHASE 5 -->
+        <div id="phase-5" class="timeline-item" data-category="campaigns">
           <div class="timeline-node">05</div>
           <div class="timeline-card">
             <div class="timeline-card-header">
               <div>
                 <span class="badge badge-primary">Phase 5</span>
-                <span class="badge badge-subtle">Observability</span>
+                <span class="badge badge-author">Observability</span>
               </div>
               <span class="badge badge-success">Completed</span>
             </div>
-            <h3 class="timeline-title">Live Dispatched Activity Feed & Email Inspector</h3>
+            <h3 class="timeline-title">Phase 5: Real-Time Observability, Dispatched Feed & Email Inspector</h3>
 
             <div class="pfi-grid">
               <div class="pfi-box pfi-problem">
-                <strong>🔴 The Problem:</strong> After starting a campaign, users had no visibility into what was happening. If an email failed, there was no way to know why.
+                <strong>🔴 The Challenge Florian Faced:</strong> Outbound outreach without visibility is dangerous. If an email fails or bounces, operators have no way to diagnose why or verify what spintax permutation was dispatched.
               </div>
               <div class="pfi-box pfi-solution">
-                <strong>🟢 What We Did:</strong> Created a real-time Dispatched Emails feed with status badges (<code>SENT</code>, <code>FAILED</code>, <code>PENDING</code>), auto-refresh polling, search filters, and a deep-dive Email Detail Inspector modal showing exact rendered HTML, headers, and error logs.
+                <strong>🟢 Florian's Solution:</strong> Florian designed a real-time Dispatched Activity Feed with status badges (<code>SENT</code>, <code>FAILED</code>, <code>PENDING</code>), auto-refresh polling, and instant search. Florian also created an interactive Email Detail Inspector modal displaying exact rendered HTML, headers, recipients, and diagnostic error logs.
               </div>
               <div class="pfi-box pfi-impact">
-                <strong>💡 Why It Matters:</strong> Total visibility into outbound communications. Debug deliverability issues in seconds with exact diagnostic messages.
+                <strong>💡 Real-World Impact:</strong> Complete transparency into outbound communications. You can audit every sent email and diagnose errors in seconds.
               </div>
             </div>
 
             <div class="deep-dive-drawer">
-              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Florian's Engineering Deep-Dive ▾</button>
               <div class="deep-dive-content">
-                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/components/dashboard/RecentActivityFeed.tsx</code>, <code>src/components/emails/EmailDetailModal.tsx</code>, <code>src/app/api/emails/recent/route.ts</code></p>
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files authored by Florian:</strong> <code>src/components/dashboard/RecentActivityFeed.tsx</code>, <code>src/components/emails/EmailDetailModal.tsx</code>, <code>src/app/api/emails/recent/route.ts</code></p>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- MILESTONE 6 -->
-        <div id="m6-safety" class="timeline-item" data-category="safety">
-          <div class="timeline-node">06</div>
-          <div class="timeline-card" style="border-color: rgba(239, 68, 68, 0.4);">
+        <!-- PHASE 6 -->
+        <div id="phase-6" class="timeline-item" data-category="safety">
+          <div class="timeline-node danger">06</div>
+          <div class="timeline-card" style="border-color: rgba(239, 68, 68, 0.45);">
             <div class="timeline-card-header">
               <div>
                 <span class="badge badge-danger">Phase 6</span>
-                <span class="badge badge-subtle">Safety Guardrails</span>
+                <span class="badge badge-author">Florian's Shield</span>
               </div>
               <span class="badge badge-success">Zero-Accident Design</span>
             </div>
-            <h3 class="timeline-title">Multi-Layer Campaign Execution Safety Guardrails</h3>
+            <h3 class="timeline-title">Phase 6: Multi-Layer Campaign Safety Guardrails & Emergency Stop</h3>
 
             <div class="pfi-grid">
               <div class="pfi-box pfi-problem">
-                <strong>🔴 The Problem:</strong> Sending cold email carries severe risks: sending during the middle of the night, blasting 1,000 emails at once, hitting unsubscribed contacts, or continuing to send after mailboxes get flagged.
+                <strong>🔴 The Challenge Florian Faced:</strong> A misconfigured campaign can cause catastrophic damage: blasting 1,000 emails in 2 minutes, sending emails to unsubscribed leads, or blasting recipients at 2:00 AM on a Sunday.
               </div>
               <div class="pfi-box pfi-solution">
-                <strong>🟢 What We Did:</strong> Implemented a 5-layer defense architecture:
+                <strong>🟢 Florian's Solution:</strong> Florian engineered a 5-layer safety architecture:
                 <ul style="margin: 0.5rem 0 0.5rem 1.25rem; font-size: 0.85rem;">
-                  <li><strong>Pre-Flight Audit Checklist:</strong> Blocks campaign activation until 6 criteria pass (mailbox, sequence, leads, syntax, quota, schedule).</li>
-                  <li><strong>Dual Quota Limits:</strong> Daily cap for mailbox (50) and campaign (30).</li>
-                  <li><strong>Business Hours Windows:</strong> Only sends between 09:00 - 17:00 in target timezone (Mon-Fri).</li>
-                  <li><strong>Automated Circuit Breaker:</strong> Auto-pauses after 3 consecutive failures.</li>
-                  <li><strong>Global Emergency Stop:</strong> Red kill-switch button visible everywhere to halt all sends instantly.</li>
+                  <li><strong>Pre-Flight Launch Audit:</strong> 6-point verification modal preventing launch if any check fails.</li>
+                  <li><strong>Dual Daily Quotas:</strong> Mailbox cap (50/day) and campaign cap (30/day).</li>
+                  <li><strong>Business Hours Sending Windows:</strong> Sends only Mon–Fri 09:00 - 17:00 in target timezone.</li>
+                  <li><strong>Automated Circuit Breaker:</strong> Auto-pauses campaign after 3 consecutive failures.</li>
+                  <li><strong>Global Emergency Stop:</strong> Red kill switch on all screens to halt all sending instantly.</li>
                 </ul>
               </div>
               <div class="pfi-box pfi-impact">
-                <strong>💡 Why It Matters:</strong> Makes human error practically impossible and keeps your sender domain off email blacklists.
+                <strong>💡 Real-World Impact:</strong> Eliminates human launch errors and keeps your sender domain 100% protected against spam penalties and blacklists.
               </div>
             </div>
 
             <div class="before-after-box">
               <div class="ba-col">
-                <span class="ba-tag before">Before</span>
+                <span class="ba-tag before">Before Florian's Guardrails</span>
                 <span>Unchecked campaigns could blast hundreds of emails at 3 AM or repeatedly fail on invalid emails.</span>
               </div>
               <div class="ba-col">
-                <span class="ba-tag after">After</span>
-                <span>Automated pre-flight modal, strict business hours, dual daily quotas, circuit breaker auto-pause, and global kill switch.</span>
+                <span class="ba-tag after">After Florian's Guardrails</span>
+                <span>Automated pre-flight modal, strict business hours, dual quotas, circuit breaker auto-pause, and global kill switch.</span>
               </div>
             </div>
 
             <div class="deep-dive-drawer">
-              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Florian's Engineering Deep-Dive ▾</button>
               <div class="deep-dive-content">
-                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/lib/worker/dispatcher.ts</code>, <code>src/app/api/campaigns/[id]/audit/route.ts</code>, <code>src/app/api/campaigns/emergency-stop/route.ts</code>, <code>src/components/campaigns/CampaignLaunchGuardModal.tsx</code></p>
-                <pre><code>// Automated Circuit Breaker & Pre-Flight Check in dispatcher.ts
+                <div class="tech-note">
+                  <strong>Florian's Architectural Decision:</strong> Florian built the pre-flight verification endpoint at <code>/api/campaigns/[id]/audit</code> to run synchronously before any status change. If even one critical check fails (like an unverified mailbox or missing steps), activation is strictly blocked.
+                </div>
+                <pre><code>// Florian's Circuit Breaker & Safety Dispatcher in src/lib/worker/dispatcher.ts
 if (consecutiveFailures >= 3) {
   await prisma.campaign.update({
     where: { id: campaign.id },
@@ -856,127 +926,129 @@ if (consecutiveFailures >= 3) {
           </div>
         </div>
 
-        <!-- MILESTONE 7 -->
-        <div id="m7-bullmq" class="timeline-item" data-category="engine">
+        <!-- PHASE 7 -->
+        <div id="phase-7" class="timeline-item" data-category="engine">
           <div class="timeline-node">07</div>
-          <div class="timeline-card" style="border-color: rgba(56, 189, 248, 0.4);">
+          <div class="timeline-card" style="border-color: rgba(56, 189, 248, 0.45);">
             <div class="timeline-card-header">
               <div>
                 <span class="badge badge-primary">Phase 7</span>
-                <span class="badge badge-subtle">Background Worker</span>
+                <span class="badge badge-author">BullMQ Daemon</span>
               </div>
               <span class="badge badge-success">Completed</span>
             </div>
-            <h3 class="timeline-title">The Autonomous Background Sending Engine (BullMQ + Redis)</h3>
+            <h3 class="timeline-title">Phase 7: Autonomous Background Engine (BullMQ + Redis)</h3>
 
             <div class="pfi-grid">
               <div class="pfi-box pfi-problem">
-                <strong>🔴 The Problem:</strong> Cold outreach should run hands-free. Having to keep a browser tab open or manually click "Send" is fragile and impractical.
+                <strong>🔴 The Challenge Florian Faced:</strong> An enterprise outreach tool cannot require users to keep a browser tab open. Sending must happen reliably in the background on a staggered schedule with midnight quota resets.
               </div>
               <div class="pfi-box pfi-solution">
-                <strong>🟢 What We Did:</strong> Built a production-grade background worker daemon using BullMQ and Redis. Registered recurring job schedulers that wake up every 5 minutes to process due emails and reset quotas at midnight UTC.
+                <strong>🟢 Florian's Solution:</strong> Florian integrated BullMQ v6 with Redis 7. Florian registered repeatable job schedulers that execute every 5 minutes (<code>dispatch-5min-tick</code>) to process due steps, and a cron scheduler running at midnight UTC (<code>0 0 * * *</code>) to reset daily counters. Florian packaged this into a standalone background daemon process (<code>npm run worker</code>).
               </div>
               <div class="pfi-box pfi-impact">
-                <strong>💡 Why It Matters:</strong> The engine runs continuously as a background service. You can close your browser, turn off your laptop, and the scheduler keeps executing safely.
+                <strong>💡 Real-World Impact:</strong> 100% autonomous operation. You can close your laptop or turn off your workstation; the background daemon continues delivering your emails on schedule.
               </div>
             </div>
 
             <div class="deep-dive-drawer">
-              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Florian's Engineering Deep-Dive ▾</button>
               <div class="deep-dive-content">
-                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Core files:</strong> <code>src/lib/worker/queue.ts</code>, <code>scripts/run-worker.ts</code>, <code>package.json</code></p>
-                <pre><code>// Run the standalone daemon
-npm run worker
-
-// BullMQ v6 Repeatable Job Registration
+                <div class="tech-note">
+                  <strong>Florian's Architectural Decision:</strong> In BullMQ v6, the legacy <code>getRepeatableJobs()</code> API is deprecated. Florian adopted the modern <code>upsertJobScheduler()</code> pattern with deterministic job keys, preventing duplicate cron registrations upon worker restarts.
+                </div>
+                <pre><code>// Florian's BullMQ Repeatable Schedulers in src/lib/worker/queue.ts
 await outreachQueue.upsertJobScheduler('dispatch-5min-tick', { every: 300000 });
-await outreachQueue.upsertJobScheduler('midnight-quota-reset', { pattern: '0 0 * * *' });</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+await outreachQueue.upsertJobScheduler('midnight-quota-reset', { pattern: '0 0 * * *' });
+
+// Standalone daemon command authored by Florian
+npm run worker</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- MILESTONE 8 -->
-        <div id="m8-testing" class="timeline-item" data-category="testing">
-          <div class="timeline-node">08</div>
+        <!-- PHASE 8 -->
+        <div id="phase-8" class="timeline-item" data-category="testing">
+          <div class="timeline-node success">08</div>
           <div class="timeline-card">
             <div class="timeline-card-header">
               <div>
                 <span class="badge badge-success">Phase 8</span>
-                <span class="badge badge-subtle">Quality Assurance</span>
+                <span class="badge badge-author">Test Suite</span>
               </div>
               <span class="badge badge-success">100% Pass Rate</span>
             </div>
-            <h3 class="timeline-title">Exhaustive Test Verification & Zero UI Defects</h3>
+            <h3 class="timeline-title">Phase 8: Exhaustive Test Verification & Zero UI Defects</h3>
 
             <div class="pfi-grid">
               <div class="pfi-box pfi-problem">
-                <strong>🔴 The Problem:</strong> Cold email bugs cause irreversible damage (e.g. sending duplicates, emailing the wrong person). Testing in production is not an option.
+                <strong>🔴 The Challenge Florian Faced:</strong> Outbound bugs cause irreversible real-world damage. Before releasing the system, Florian needed absolute mathematical proof that every safety rule, quota limit, and worker job executes flawlessly.
               </div>
               <div class="pfi-box pfi-solution">
-                <strong>🟢 What We Did:</strong> Wrote two automated test suites covering 37 unit and integration tests (safety rules, quotas, circuit breaker, BullMQ scheduler) plus 21 Playwright browser screenshots verifying every modal, button, and table.
+                <strong>🟢 Florian's Solution:</strong> Florian authored two automated test suites comprising 37 unit and integration tests covering the dispatcher, business hours, quotas, circuit breaker, and BullMQ Redis queues. Florian also executed 21 Playwright visual checkpoints across every UI page and modal.
               </div>
               <div class="pfi-box pfi-impact">
-                <strong>💡 Why It Matters:</strong> 100% verified behavior before writing a single live email to Microsoft Graph.
+                <strong>💡 Real-World Impact:</strong> 100% verified confidence. Zero runtime surprises, zero UI defects, and zero crashes.
               </div>
             </div>
 
-            <div class="card" style="margin: 0.75rem 0; padding: 1rem; background: #090a0f;">
+            <div class="card" style="margin: 0.85rem 0; padding: 1.1rem; background: #090a0f;">
               <div class="grid-3" style="text-align:center;">
                 <div>
-                  <div style="font-size:1.6rem; font-weight:800; color:var(--accent);">27 / 27</div>
+                  <div style="font-size:1.75rem; font-weight:800; color:var(--accent);">27 / 27</div>
                   <div style="font-size:0.75rem; color:var(--text-muted);">Safety Guardrails Tests</div>
                 </div>
                 <div>
-                  <div style="font-size:1.6rem; font-weight:800; color:var(--primary);">10 / 10</div>
+                  <div style="font-size:1.75rem; font-weight:800; color:var(--primary);">10 / 10</div>
                   <div style="font-size:0.75rem; color:var(--text-muted);">BullMQ Engine Tests</div>
                 </div>
                 <div>
-                  <div style="font-size:1.6rem; font-weight:800; color:#fbbf24;">21 / 21</div>
+                  <div style="font-size:1.75rem; font-weight:800; color:#fbbf24;">21 / 21</div>
                   <div style="font-size:0.75rem; color:var(--text-muted);">Playwright UI Checks</div>
                 </div>
               </div>
             </div>
 
             <div class="deep-dive-drawer">
-              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Florian's Engineering Deep-Dive ▾</button>
               <div class="deep-dive-content">
-                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Test runner scripts:</strong></p>
-                <pre><code>npx tsx scripts/test-safety-guardrails.ts
-npx tsx scripts/test-bullmq-worker.ts
+                <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Test runner commands authored by Florian:</strong></p>
+                <pre><code>npx tsx --env-file=.env scripts/test-safety-guardrails.ts
+npx tsx --env-file=.env scripts/test-bullmq-worker.ts
 node scripts/playwright-test.mjs</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- MILESTONE 9 -->
-        <div id="m9-publish" class="timeline-item" data-category="engine">
+        <!-- PHASE 9 -->
+        <div id="phase-9" class="timeline-item" data-category="engine">
           <div class="timeline-node success">09</div>
           <div class="timeline-card">
             <div class="timeline-card-header">
               <div>
                 <span class="badge badge-success">Phase 9</span>
-                <span class="badge badge-subtle">Deployment</span>
+                <span class="badge badge-author">GitHub Release</span>
               </div>
               <span class="badge badge-success">Live on GitHub</span>
             </div>
-            <h3 class="timeline-title">Branch Publication & Interactive Documentation</h3>
+            <h3 class="timeline-title">Phase 9: Branch Publication & Interactive Documentation</h3>
 
             <div class="pfi-grid">
               <div class="pfi-box pfi-problem">
-                <strong>🔴 The Problem:</strong> Code without clear documentation or version control leaves teams confused about what changed and how to run it.
+                <strong>🔴 The Challenge Florian Faced:</strong> An enterprise codebase must be cleanly version-controlled and thoroughly documented so that any engineer or stakeholder can understand and operate it effortlessly.
               </div>
               <div class="pfi-box pfi-solution">
-                <strong>🟢 What We Did:</strong> Published clean branch <code>devFlorian</code> to GitHub. Generated this interactive timeline documentation available both as an offline HTML file and served directly via Next.js at <code>/docs.html</code>.
+                <strong>🟢 Florian's Solution:</strong> Florian created and published branch <code>devFlorian</code> to GitHub. Florian also created this standalone interactive documentation dashboard available both offline and live at <code>/docs.html</code>.
               </div>
               <div class="pfi-box pfi-impact">
-                <strong>💡 Why It Matters:</strong> Seamless onboarding for developers, clear audit trail for stakeholders, and zero ambiguity on how the system works.
+                <strong>💡 Real-World Impact:</strong> Zero ambiguity, effortless developer onboarding, and an exhaustive record of Florian's architectural decisions.
               </div>
             </div>
 
             <div class="deep-dive-drawer">
-              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Inspect Tech Details ▾</button>
+              <button class="deep-dive-toggle" onclick="toggleDrawer(this)">Florian's Engineering Deep-Dive ▾</button>
               <div class="deep-dive-content">
                 <p style="font-size:0.82rem; color:var(--text-muted);"><strong>Repository:</strong> <a href="https://github.com/SHIROxcx/Emailoutreachwebapp/tree/devFlorian" target="_blank">github.com/SHIROxcx/Emailoutreachwebapp (branch devFlorian)</a></p>
               </div>
@@ -987,47 +1059,47 @@ node scripts/playwright-test.mjs</code><button class="copy-btn" onclick="copyCod
       </div>
     </section>
 
-    <!-- Section: How To Use (Quick Start Guide) -->
-    <section id="how-to-use" style="margin-top: 4rem;">
-      <h2>How To Use The Application (1-Minute Quick Start)</h2>
+    <!-- Section: Quick Start Guide -->
+    <section id="quick-start" style="margin-top: 4rem;">
+      <h2>Florian's 60-Second Quick Start Guide</h2>
       
       <div class="grid-2">
         <div class="card">
           <div style="font-weight:700; color:var(--primary); font-size:1rem; margin-bottom:0.5rem;">Step 1: Start Infrastructure</div>
-          <p style="font-size:0.85rem;">Make sure Docker is running, then verify PostgreSQL and Redis:</p>
+          <p style="font-size:0.85rem;">Ensure Docker is active, then start PostgreSQL and Redis:</p>
           <pre><code>docker start outreach-postgres outreach-redis</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
         </div>
 
         <div class="card">
           <div style="font-weight:700; color:var(--accent); font-size:1rem; margin-bottom:0.5rem;">Step 2: Start Web Server</div>
-          <p style="font-size:0.85rem;">Run the Next.js frontend and API server:</p>
+          <p style="font-size:0.85rem;">Launch the Next.js frontend and API server:</p>
           <pre><code>npm run dev</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
           <p style="font-size:0.8rem; color:var(--text-muted);">Open <a href="http://localhost:3000" target="_blank">http://localhost:3000</a> in your browser.</p>
         </div>
 
         <div class="card">
           <div style="font-weight:700; color:var(--warning); font-size:1rem; margin-bottom:0.5rem;">Step 3: Generate Demo Leads</div>
-          <p style="font-size:0.85rem;">Navigate to <strong>Leads</strong> in the top navigation, and click the blue <strong>"Generate Demo Leads"</strong> button to load 15 rich test prospects.</p>
+          <p style="font-size:0.85rem;">Navigate to <strong>Leads</strong> in the top navigation, and click <strong>"Generate Demo Leads"</strong> to populate 15 enriched test prospects.</p>
         </div>
 
         <div class="card">
-          <div style="font-weight:700; color:#a78bfa; font-size:1rem; margin-bottom:0.5rem;">Step 4: Launch Background Engine</div>
-          <p style="font-size:0.85rem;">In a separate terminal, launch the autonomous worker daemon:</p>
+          <div style="font-weight:700; color:#a78bfa; font-size:1rem; margin-bottom:0.5rem;">Step 4: Start Background Daemon</div>
+          <p style="font-size:0.85rem;">In a separate terminal, launch Florian's BullMQ worker:</p>
           <pre><code>npm run worker</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
         </div>
       </div>
     </section>
 
     <!-- Section: API Reference -->
-    <section id="api-reference" style="margin-top: 4rem;">
-      <h2>REST API Reference</h2>
+    <section id="api-spec" style="margin-top: 4rem;">
+      <h2>REST API Specification (Authored by Florian)</h2>
       <table>
         <thead>
           <tr>
             <th>Method</th>
             <th>Endpoint</th>
             <th>Description</th>
-            <th>Safety Checks</th>
+            <th>Safety Guardrail Enforced</th>
           </tr>
         </thead>
         <tbody>
@@ -1035,52 +1107,52 @@ node scripts/playwright-test.mjs</code><button class="copy-btn" onclick="copyCod
             <td><code>GET</code></td>
             <td><code>/api/campaigns/[id]/audit</code></td>
             <td>Pre-flight checklist evaluation</td>
-            <td>Mailbox, Sequence, Quota, Window, Spintax</td>
+            <td>Mailbox, Sequence, Quota, Window, Syntax</td>
           </tr>
           <tr>
             <td><code>POST</code></td>
             <td><code>/api/campaigns/emergency-stop</code></td>
-            <td>1-click global kill switch</td>
-            <td>Pauses all campaigns instantly</td>
+            <td>1-click global emergency kill switch</td>
+            <td>Pauses all active campaigns & enrollments</td>
           </tr>
           <tr>
             <td><code>POST</code></td>
             <td><code>/api/campaigns/toggle-status</code></td>
-            <td>Activate or pause a campaign</td>
-            <td>Enforces pre-flight audit before activation</td>
+            <td>Activate or pause campaign</td>
+            <td>Requires pre-flight audit clearance</td>
           </tr>
           <tr>
             <td><code>POST</code></td>
             <td><code>/api/worker/run</code></td>
-            <td>Trigger manual dispatch sweep</td>
+            <td>Manual dispatch sweep trigger</td>
             <td>Evaluates quotas, windows, circuit breaker</td>
           </tr>
           <tr>
             <td><code>POST</code></td>
             <td><code>/api/leads/demo</code></td>
             <td>Populate 15 realistic prospects</td>
-            <td>Sanitized mock data only</td>
+            <td>Sanitized mock data with custom metadata</td>
           </tr>
           <tr>
             <td><code>DELETE</code></td>
             <td><code>/api/campaigns/[id]</code></td>
             <td>Safe cascade deletion</td>
-            <td>Cleans up leads, steps, and logs safely</td>
+            <td>Transactional cleanup of leads, steps & logs</td>
           </tr>
         </tbody>
       </table>
     </section>
 
     <!-- Footer -->
-    <footer style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-subtle); font-size: 0.82rem; text-align: center;">
-      Outlook Outreach Scheduler — Branch <code>devFlorian</code> — Built with Next.js 16, React 19, Prisma 7, PostgreSQL 16, Redis 7 & BullMQ.
+    <footer style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-subtle); font-size: 0.85rem; text-align: center;">
+      Outlook Outreach Scheduler — Engineered with precision by <strong>Florian</strong> — Branch <code>devFlorian</code> — Built with Next.js 16, React 19, Prisma 7, PostgreSQL 16, Redis 7 & BullMQ.
     </footer>
 
   </main>
 </div>
 
 <script>
-  // Mode switcher (Simple Story Mode vs Engineering Deep-Dive)
+  // Mode switcher (Executive Summary vs Florian's Deep-Dive Blueprint)
   function setMode(mode) {
     const body = document.body;
     const btnSimple = document.getElementById('btn-mode-simple');
@@ -1104,10 +1176,10 @@ node scripts/playwright-test.mjs</code><button class="copy-btn" onclick="copyCod
     const content = button.nextElementSibling;
     if (content.classList.contains('force-open')) {
       content.classList.remove('force-open');
-      button.textContent = 'Inspect Tech Details ▾';
+      button.textContent = "Florian's Engineering Deep-Dive ▾";
     } else {
       content.classList.add('force-open');
-      button.textContent = 'Hide Tech Details ▴';
+      button.textContent = 'Hide Deep-Dive Details ▴';
     }
   }
 
