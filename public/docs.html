@@ -3,35 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Outlook Outreach Scheduler — Engineering Logbook & Architecture Blueprint</title>
+  <title>Outlook Outreach Scheduler — Engineering Architecture & System Logbook</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #ffffff;
-      --surface: #f8fafc;
-      --surface-subtle: #f1f5f9;
-      --border: #e2e8f0;
-      --border-subtle: #edf2f7;
-      --text-title: #0f172a;
-      --text-body: #334155;
-      --text-muted: #475569;
-      --text-faint: #64748b;
-      --primary: #075985;
-      --primary-tint: #f0f9ff;
+      --bg: #f7f6f2;
+      --surface: #ffffff;
+      --surface-warm: #f0eee8;
+      --border: #e4e1d8;
+      --border-subtle: #edebe4;
+      --text-title: #1c1e22;
+      --text-body: #2d3138;
+      --text-muted: #525866;
+      --text-faint: #555a66;
+      --primary: #0369a1;
+      --primary-tint: #e0f2fe;
       --primary-border: #bae6fd;
       --success: #065f46;
-      --success-tint: #ecfdf5;
+      --success-tint: #d1fae5;
       --success-border: #a7f3d0;
       --warning: #92400e;
-      --warning-tint: #fffbeb;
+      --warning-tint: #fef3c7;
       --warning-border: #fde68a;
-      --danger: #be123c;
-      --danger-tint: #fff1f2;
+      --danger: #9f1239;
+      --danger-tint: #ffe4e6;
       --danger-border: #fecdd3;
-      --code-bg: #0f172a;
-      --code-text: #f8fafc;
+      --code-bg: #1e222b;
+      --code-text: #f3f4f6;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,10 +45,10 @@
       font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg);
       color: var(--text-body);
-      line-height: 1.68;
-      font-size: 15px;
+      line-height: 1.75;
+      font-size: 15.5px;
       -webkit-font-smoothing: antialiased;
-      scrollbar-color: #cbd5e1 #f8fafc;
+      scrollbar-color: #cbd5e1 var(--surface-warm);
     }
 
     code, pre, .font-mono {
@@ -71,27 +71,33 @@
     }
 
     .sidebar {
-      width: 290px;
-      background: var(--surface);
+      width: 275px;
+      background: var(--surface-warm);
       border-right: 1px solid var(--border);
       position: sticky;
       top: 0;
       height: 100vh;
       overflow-y: auto;
-      padding: 2.25rem 1.35rem;
+      padding: 2.25rem 1.25rem;
       flex-shrink: 0;
     }
 
-    .main {
+    .main-container {
       flex: 1;
-      padding: 3.5rem 4.5rem;
-      max-width: 1060px;
+      display: flex;
+      justify-content: center;
+      padding: 3.5rem 2rem;
+    }
+
+    .content-well {
+      width: 100%;
+      max-width: 840px;
     }
 
     @media (max-width: 1024px) {
       .layout { flex-direction: column; }
       .sidebar { width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
-      .main { padding: 2rem 1.5rem; }
+      .main-container { padding: 2rem 1.25rem; }
     }
 
     /* Navigation */
@@ -110,7 +116,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       color: var(--text-muted);
       padding: 0.4rem 0.65rem;
       border-radius: 6px;
@@ -118,13 +124,14 @@
     }
     .nav-link:hover {
       color: var(--text-title);
-      background: var(--surface-subtle);
+      background: rgba(0, 0, 0, 0.04);
       text-decoration: none;
     }
     .nav-link.active {
       color: var(--primary);
-      background: var(--primary-tint);
+      background: #ffffff;
       font-weight: 600;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
     }
 
     /* Badges */
@@ -133,7 +140,7 @@
       align-items: center;
       gap: 0.35rem;
       padding: 0.2rem 0.65rem;
-      border-radius: 6px;
+      border-radius: 5px;
       font-size: 0.74rem;
       font-weight: 600;
       font-family: 'JetBrains Mono', monospace;
@@ -143,89 +150,19 @@
     .badge-success { background: var(--success-tint); color: var(--success); border: 1px solid var(--success-border); }
     .badge-warning { background: var(--warning-tint); color: var(--warning); border: 1px solid var(--warning-border); }
     .badge-danger { background: var(--danger-tint); color: var(--danger); border: 1px solid var(--danger-border); }
-    .badge-neutral { background: var(--surface-subtle); color: var(--text-muted); border: 1px solid var(--border); }
-
-    /* Segmented Control (Mode Switcher) */
-    .mode-toolbar {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.85rem 1.25rem;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-bottom: 2.75rem;
-    }
-    .segmented-control {
-      display: flex;
-      background: #e2e8f0;
-      padding: 0.2rem;
-      border-radius: 8px;
-    }
-    .segment-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 0.82rem;
-      font-weight: 600;
-      padding: 0.45rem 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.15s ease;
-      font-family: inherit;
-    }
-    .segment-btn.active {
-      background: #ffffff;
-      color: var(--text-title);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-    }
-
-    /* Filter Bar */
-    .filter-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.45rem;
-      margin-bottom: 2rem;
-    }
-    .filter-btn {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      padding: 0.35rem 0.85rem;
-      border-radius: 6px;
-      font-size: 0.78rem;
-      cursor: pointer;
-      font-weight: 500;
-      transition: all 0.15s ease;
-    }
-    .filter-btn:hover {
-      color: var(--text-title);
-      border-color: #cbd5e1;
-    }
-    .filter-btn.active {
-      background: var(--primary-tint);
-      color: var(--primary);
-      border-color: var(--primary-border);
-      font-weight: 600;
-    }
+    .badge-neutral { background: var(--surface-warm); color: var(--text-muted); border: 1px solid var(--border); }
 
     /* Editorial Journal Timeline */
     .journal-entry {
       border-top: 1px solid var(--border);
-      padding: 2.25rem 0;
+      padding: 2.75rem 0;
       display: grid;
-      grid-template-columns: 200px 1fr;
-      gap: 2.5rem;
+      grid-template-columns: 190px 1fr;
+      gap: 2.25rem;
     }
     .journal-entry:last-child {
       border-bottom: 1px solid var(--border);
     }
-    .journal-entry.hidden { display: none; }
 
     @media (max-width: 768px) {
       .journal-entry { grid-template-columns: 1fr; gap: 1rem; }
@@ -234,7 +171,7 @@
     .journal-meta {
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.6rem;
     }
     .phase-badge {
       font-size: 0.76rem;
@@ -248,18 +185,19 @@
     }
 
     .journal-body h3 {
-      font-size: 1.25rem;
+      font-size: 1.3rem;
       font-weight: 700;
       color: var(--text-title);
       margin-bottom: 0.85rem;
+      letter-spacing: -0.015em;
     }
 
     /* Structured Narrative Blocks */
     .narrative-block {
-      margin: 1rem 0;
-      padding: 0.9rem 1.15rem;
+      margin: 1.1rem 0;
+      padding: 1rem 1.25rem;
       border-radius: 8px;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       background: var(--surface);
       border: 1px solid var(--border);
     }
@@ -269,20 +207,16 @@
       text-transform: uppercase;
       letter-spacing: 0.06em;
       margin-bottom: 0.35rem;
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
     }
     .narrative-label.challenge { color: var(--danger); }
     .narrative-label.solution { color: var(--success); }
-    .narrative-label.impact { color: var(--primary); }
 
-    /* Before / After Table */
+    /* Comparison Grid */
     .comparison-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
-      margin: 1rem 0;
+      margin: 1.1rem 0;
     }
     @media (max-width: 640px) {
       .comparison-grid { grid-template-columns: 1fr; }
@@ -291,8 +225,8 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 0.9rem 1rem;
-      font-size: 0.84rem;
+      padding: 0.95rem 1.1rem;
+      font-size: 0.86rem;
     }
     .comparison-title {
       font-size: 0.72rem;
@@ -304,40 +238,6 @@
     .comparison-title.before { color: var(--danger); }
     .comparison-title.after { color: var(--success); }
 
-    /* Collapsible Deep-Dive */
-    .deep-dive-section {
-      margin-top: 1.25rem;
-      padding-top: 1rem;
-      border-top: 1px dashed var(--border);
-    }
-    .deep-dive-btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 0.78rem;
-      font-weight: 600;
-      padding: 0.35rem 0.8rem;
-      border-radius: 6px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-family: 'JetBrains Mono', monospace;
-      transition: all 0.15s ease;
-    }
-    .deep-dive-btn:hover {
-      background: var(--surface);
-      color: var(--text-title);
-      border-color: #cbd5e1;
-    }
-    .deep-dive-drawer {
-      margin-top: 1rem;
-    }
-    body.mode-simple .deep-dive-drawer { display: none; }
-    body.mode-simple .deep-dive-drawer.force-open { display: block; }
-    body.mode-tech .deep-dive-drawer { display: block; }
-    body.mode-tech .deep-dive-btn { display: none; }
-
     /* Typography & Core Elements */
     h1 {
       font-size: 2.25rem;
@@ -345,10 +245,10 @@
       letter-spacing: -0.025em;
       color: var(--text-title);
       line-height: 1.25;
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.75rem;
     }
     h2 {
-      font-size: 1.5rem;
+      font-size: 1.45rem;
       font-weight: 700;
       letter-spacing: -0.015em;
       color: var(--text-title);
@@ -357,21 +257,21 @@
       padding-bottom: 0.65rem;
       border-bottom: 1px solid var(--border);
     }
-    p { margin-bottom: 0.85rem; color: var(--text-body); }
+    p { margin-bottom: 0.95rem; color: var(--text-body); }
 
     pre {
       background: var(--code-bg);
       color: var(--code-text);
       border-radius: 8px;
-      padding: 1.1rem;
+      padding: 1.15rem;
       overflow-x: auto;
-      font-size: 0.84rem;
-      line-height: 1.6;
-      margin: 0.85rem 0;
+      font-size: 0.85rem;
+      line-height: 1.62;
+      margin: 0.9rem 0;
       position: relative;
     }
     code {
-      background: var(--surface-subtle);
+      background: rgba(0, 0, 0, 0.05);
       color: var(--text-title);
       padding: 0.15rem 0.35rem;
       border-radius: 4px;
@@ -383,50 +283,50 @@
       width: 100%;
       border-collapse: collapse;
       margin: 1.25rem 0;
-      font-size: 0.86rem;
+      font-size: 0.88rem;
     }
     th, td {
       border: 1px solid var(--border);
-      padding: 0.75rem 0.95rem;
+      padding: 0.75rem 1rem;
       text-align: left;
     }
     th {
-      background-color: var(--surface);
+      background-color: var(--surface-warm);
       font-weight: 600;
       color: var(--text-title);
     }
-    td { background-color: #ffffff; }
+    td { background-color: var(--surface); }
 
     .copy-btn {
       position: absolute;
-      top: 0.6rem;
-      right: 0.6rem;
+      top: 0.65rem;
+      right: 0.65rem;
       background: rgba(255, 255, 255, 0.12);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      color: #cbd5e1;
+      color: #e2e8f0;
       border-radius: 5px;
       font-size: 0.72rem;
       padding: 0.2rem 0.55rem;
       cursor: pointer;
       font-family: inherit;
     }
-    .copy-btn:hover { background: rgba(255, 255, 255, 0.22); color: #ffffff; }
+    .copy-btn:hover { background: rgba(255, 255, 255, 0.25); color: #ffffff; }
 
     /* Workflow Visuals */
-    .flow-grid {
+    .flow-stepper {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 0.85rem;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
       margin: 1.25rem 0;
     }
-    .flow-item {
+    .flow-step-box {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 1rem;
+      padding: 1rem 0.85rem;
       text-align: center;
     }
-    .flow-item-num {
+    .flow-step-num {
       font-size: 0.72rem;
       font-weight: 700;
       color: var(--primary);
@@ -434,19 +334,20 @@
       letter-spacing: 0.05em;
       margin-bottom: 0.25rem;
     }
-    .flow-item-title {
+    .flow-step-title {
       font-weight: 700;
       color: var(--text-title);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       margin-bottom: 0.25rem;
     }
-    .flow-item-desc {
-      font-size: 0.78rem;
+    .flow-step-desc {
+      font-size: 0.76rem;
       color: var(--text-muted);
+      line-height: 1.4;
     }
   </style>
 </head>
-<body class="mode-simple">
+<body>
 
 <div class="layout">
   <!-- Left Navigation Sidebar -->
@@ -457,7 +358,7 @@
       </div>
       <div>
         <div style="font-weight:700; font-size:0.95rem; color:var(--text-title);">Outreach Scheduler</div>
-        <div style="font-size:0.75rem; color:var(--text-faint);">System Architecture & Logbook</div>
+        <div style="font-size:0.75rem; color:var(--text-faint);">Architecture & System Logbook</div>
       </div>
     </div>
 
@@ -489,266 +390,218 @@
     </nav>
   </aside>
 
-  <!-- Main Content Area -->
-  <main class="main">
+  <!-- Centered Content Well -->
+  <main class="main-container">
+    <div class="content-well">
 
-    <!-- Header -->
-    <header id="hero" style="margin-bottom: 2.5rem;">
-      <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.85rem;">
-        <span class="badge badge-success">37 Automated Tests Passed</span>
-        <span class="badge badge-primary">Published to devFlorian</span>
-        <span class="badge badge-neutral">Zero UI Defects</span>
-      </div>
-      <h1>Outlook Outreach Scheduler</h1>
-      <p style="font-size: 1.15rem; color: var(--text-muted); max-width: 800px; line-height: 1.6;">
-        Complete technical documentation and engineering journal for the Microsoft 365 cold email automation platform, covering multi-touch drip sequences, Spintax permutation, safety guardrails, and autonomous BullMQ queue execution.
-      </p>
-    </header>
-
-    <!-- Reading Mode Toolbar -->
-    <div class="mode-toolbar">
-      <div>
-        <div style="font-weight:700; font-size:0.92rem; color:var(--text-title);">Documentation View</div>
-        <div style="font-size:0.8rem; color:var(--text-faint);">Choose between high-level operational summaries or technical code blueprints.</div>
-      </div>
-      <div class="segmented-control">
-        <button id="btn-mode-simple" class="segment-btn active" onclick="setMode('simple')">
-          Executive Overview
-        </button>
-        <button id="btn-mode-tech" class="segment-btn" onclick="setMode('tech')">
-          Engineering Blueprint
-        </button>
-      </div>
-    </div>
-
-    <!-- Section: Workflows -->
-    <section id="workflows" style="margin-bottom: 3.5rem;">
-      <h2>System Architecture & Workflows</h2>
-
-      <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-title); margin-top:1.25rem;">1. The Outbound Email Pipeline</h3>
-      <p style="font-size:0.88rem; color:var(--text-muted);">
-        Every recipient progresses sequentially through validation, templating, and delayed execution:
-      </p>
-
-      <div class="flow-grid">
-        <div class="flow-item">
-          <div class="flow-item-num">Step 1</div>
-          <div class="flow-item-title">Prospect Enrolled</div>
-          <div class="flow-item-desc">CSV import or generated demo lead with verified metadata</div>
+      <!-- Header -->
+      <header id="hero" style="margin-bottom: 2.75rem;">
+        <div style="display:flex; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.85rem;">
+          <span class="badge badge-success">37 Automated Tests Passed</span>
+          <span class="badge badge-primary">Published to devFlorian</span>
+          <span class="badge badge-neutral">Zero UI Defects</span>
         </div>
-        <div class="flow-item">
-          <div class="flow-item-num">Step 2</div>
-          <div class="flow-item-title">Sequence Rendered</div>
-          <div class="flow-item-desc">Recursive Spintax permutation and fallback variable merge</div>
-        </div>
-        <div class="flow-item" style="border-color:var(--primary-border); background:var(--primary-tint);">
-          <div class="flow-item-num" style="color:var(--primary);">Step 3</div>
-          <div class="flow-item-title" style="color:var(--primary);">Pre-Flight Audit</div>
-          <div class="flow-item-desc">6-point runtime safety inspection prior to arming</div>
-        </div>
-        <div class="flow-item">
-          <div class="flow-item-num">Step 4</div>
-          <div class="flow-item-title">BullMQ Scheduled</div>
-          <div class="flow-item-desc">Enqueued in Redis with configurable delay staggers</div>
-        </div>
-        <div class="flow-item">
-          <div class="flow-item-num">Step 5</div>
-          <div class="flow-item-title">Microsoft Graph</div>
-          <div class="flow-item-desc">Direct dispatch via Outlook OAuth 2.0 PKCE token vault</div>
-        </div>
-      </div>
+        <h1>Outlook Outreach Scheduler</h1>
+        <p style="font-size: 1.15rem; color: var(--text-muted); line-height: 1.65;">
+          Technical documentation and architectural logbook for the Microsoft 365 cold email automation platform, detailing multi-touch drip sequences, Spintax permutation, delivery safety guardrails, and autonomous BullMQ queue execution.
+        </p>
+      </header>
 
-      <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-title); margin-top:2.25rem;">2. Five-Layer Safety Architecture</h3>
-      <p style="font-size:0.88rem; color:var(--text-muted);">
-        Automated runtime checks executed prior to every single dispatch call:
-      </p>
+      <!-- Section: Workflows -->
+      <section id="workflows" style="margin-bottom: 3.5rem;">
+        <h2>System Architecture & Workflows</h2>
 
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; margin-top:1rem;">
-        <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.1rem;">
-          <div style="font-weight:700; color:var(--text-title); font-size:0.9rem; margin-bottom:0.35rem;">Dual Quota Protection</div>
-          <div style="font-size:0.84rem; color:var(--text-muted);">Independent ceilings for mailboxes (50/day) and individual campaigns (30/day), with automated midnight UTC resets.</div>
-        </div>
-        <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.1rem;">
-          <div style="font-weight:700; color:var(--text-title); font-size:0.9rem; margin-bottom:0.35rem;">Business Hours Windows</div>
-          <div style="font-size:0.84rem; color:var(--text-muted);">Strict delivery window restriction (09:00 to 17:00 target timezone, Mon–Fri). Sends are deferred, never dropped.</div>
-        </div>
-        <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.1rem;">
-          <div style="font-weight:700; color:var(--text-title); font-size:0.9rem; margin-bottom:0.35rem;">Automated Circuit Breaker</div>
-          <div style="font-size:0.84rem; color:var(--text-muted);">Automatically pauses the campaign after 3 consecutive delivery failures to protect mailbox reputation.</div>
-        </div>
-      </div>
-    </section>
+        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-title); margin-top:1.25rem;">1. Outbound Email Pipeline</h3>
+        <p style="font-size:0.9rem; color:var(--text-muted);">
+          Recipients progress sequentially through validation, templating, safety audits, and background execution:
+        </p>
 
-    <!-- Section: Timeline -->
-    <section id="timeline">
-      <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:1rem; margin-bottom:1.5rem;">
-        <h2>Chronological Development Log</h2>
-        <div style="font-size:0.82rem; color:var(--text-faint);">9 Phases Implemented & Verified</div>
-      </div>
-
-      <!-- Filter Buttons -->
-      <div class="filter-bar">
-        <button class="filter-btn active" onclick="filterTimeline('all')">All Phases</button>
-        <button class="filter-btn" onclick="filterTimeline('safety')">Safety Guardrails</button>
-        <button class="filter-btn" onclick="filterTimeline('engine')">Sending Engine</button>
-        <button class="filter-btn" onclick="filterTimeline('leads')">Leads & Privacy</button>
-        <button class="filter-btn" onclick="filterTimeline('campaigns')">Campaigns & Spintax</button>
-        <button class="filter-btn" onclick="filterTimeline('testing')">Testing Suite</button>
-      </div>
-
-      <div class="journal-container">
-
-        <!-- PHASE 01 -->
-        <article id="phase-1" class="journal-entry" data-category="engine">
-          <div class="journal-meta">
-            <span class="phase-badge">Phase 01</span>
-            <span class="phase-category">Infrastructure</span>
-            <span class="badge badge-success" style="width:fit-content;">Delivered</span>
+        <div class="flow-stepper">
+          <div class="flow-step-box">
+            <div class="flow-step-num">Step 1</div>
+            <div class="flow-step-title">Prospect Enrolled</div>
+            <div class="flow-step-desc">CSV import or generated demo lead with verified metadata</div>
           </div>
-          <div class="journal-body">
-            <h3>Full-Stack Scaffolding & Relational Persistence</h3>
+          <div class="flow-step-box">
+            <div class="flow-step-num">Step 2</div>
+            <div class="flow-step-title">Sequence Rendered</div>
+            <div class="flow-step-desc">Recursive Spintax permutation and fallback variable merge</div>
+          </div>
+          <div class="flow-step-box" style="border-color:var(--primary-border); background:var(--primary-tint);">
+            <div class="flow-step-num" style="color:var(--primary);">Step 3</div>
+            <div class="flow-step-title" style="color:var(--primary);">Pre-Flight Audit</div>
+            <div class="flow-step-desc">6-point runtime safety inspection prior to arming</div>
+          </div>
+          <div class="flow-step-box">
+            <div class="flow-step-num">Step 4</div>
+            <div class="flow-step-title">BullMQ Scheduled</div>
+            <div class="flow-step-desc">Enqueued in Redis with configurable delay staggers</div>
+          </div>
+          <div class="flow-step-box">
+            <div class="flow-step-num">Step 5</div>
+            <div class="flow-step-title">Microsoft Graph</div>
+            <div class="flow-step-desc">Direct dispatch via Outlook OAuth 2.0 PKCE token vault</div>
+          </div>
+        </div>
 
-            <div class="narrative-block">
-              <div class="narrative-label challenge">Systems Constraint</div>
-              <p style="margin-bottom:0;">An outbound scheduling platform requires low-latency reactive UI updates alongside durable relational transactions for contacts, sequences, and queue state.</p>
+        <h3 style="font-size:1.05rem; font-weight:700; color:var(--text-title); margin-top:2.25rem;">2. Five-Layer Safety Architecture</h3>
+        <p style="font-size:0.9rem; color:var(--text-muted);">
+          Automated runtime checks executed prior to every single dispatch call:
+        </p>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:1rem; margin-top:1rem;">
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.1rem;">
+            <div style="font-weight:700; color:var(--text-title); font-size:0.92rem; margin-bottom:0.35rem;">Dual Quota Protection</div>
+            <div style="font-size:0.86rem; color:var(--text-muted);">Independent ceilings for mailboxes (50/day) and individual campaigns (30/day), with automated midnight UTC resets.</div>
+          </div>
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.1rem;">
+            <div style="font-weight:700; color:var(--text-title); font-size:0.92rem; margin-bottom:0.35rem;">Business Hours Windows</div>
+            <div style="font-size:0.86rem; color:var(--text-muted);">Strict delivery window restriction (09:00 to 17:00 target timezone, Mon–Fri). Sends are deferred, never dropped.</div>
+          </div>
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.1rem;">
+            <div style="font-weight:700; color:var(--text-title); font-size:0.92rem; margin-bottom:0.35rem;">Automated Circuit Breaker</div>
+            <div style="font-size:0.86rem; color:var(--text-muted);">Automatically pauses the campaign after 3 consecutive delivery failures to protect mailbox reputation.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Timeline -->
+      <section id="timeline">
+        <h2>Chronological Engineering Log</h2>
+
+        <div class="journal-container">
+
+          <!-- PHASE 01 -->
+          <article id="phase-1" class="journal-entry">
+            <div class="journal-meta">
+              <span class="phase-badge">Phase 01</span>
+              <span class="phase-category">Infrastructure</span>
+              <span class="badge badge-success" style="width:fit-content;">Delivered</span>
             </div>
+            <div class="journal-body">
+              <h3>Full-Stack Scaffolding & Relational Persistence</h3>
 
-            <div class="narrative-block">
-              <div class="narrative-label solution">Architectural Solution</div>
-              <p style="margin-bottom:0;">Scaffolded Next.js 16 with React 19, TypeScript, PostgreSQL 16 managed via Prisma 7 ORM, Redis 7 for message queuing, and Docker container orchestration.</p>
-            </div>
-
-            <div class="comparison-grid">
-              <div class="comparison-box">
-                <div class="comparison-title before">Initial State</div>
-                <div>No database or queue infrastructure configured.</div>
+              <div class="narrative-block">
+                <div class="narrative-label challenge">Systems Constraint</div>
+                <p style="margin-bottom:0;">An outbound scheduling platform requires low-latency reactive UI updates alongside durable relational transactions for contacts, sequences, and queue state.</p>
               </div>
-              <div class="comparison-box">
-                <div class="comparison-title after">Delivered State</div>
-                <div>PostgreSQL 16, Redis 7, Prisma 7 schema models, and Next.js 16 App Router.</div>
-              </div>
-            </div>
 
-            <div class="deep-dive-section">
-              <button class="deep-dive-btn" onclick="toggleDrawer(this)">Technical Specifications ▾</button>
-              <div class="deep-dive-drawer">
-                <p style="font-size:0.84rem; color:var(--text-muted);">Core services orchestrated via Docker:</p>
-                <pre><code>docker run --name outreach-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:16-alpine
+              <div class="narrative-block">
+                <div class="narrative-label solution">Architectural Solution</div>
+                <p style="margin-bottom:0;">Scaffolded Next.js 16 with React 19, TypeScript, PostgreSQL 16 managed via Prisma 7 ORM, Redis 7 for message queuing, and Docker container orchestration.</p>
+              </div>
+
+              <div class="comparison-grid">
+                <div class="comparison-box">
+                  <div class="comparison-title before">Initial State</div>
+                  <div>No database or queue infrastructure configured.</div>
+                </div>
+                <div class="comparison-box">
+                  <div class="comparison-title after">Delivered State</div>
+                  <div>PostgreSQL 16, Redis 7, Prisma 7 schema models, and Next.js 16 App Router.</div>
+                </div>
+              </div>
+
+              <p style="font-size:0.86rem; color:var(--text-muted); margin-top:1rem;">Orchestrated Docker services:</p>
+              <pre><code>docker run --name outreach-postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres:16-alpine
 docker run --name outreach-redis -p 6379:6379 -d redis:7-alpine</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+            </div>
+          </article>
+
+          <!-- PHASE 02 -->
+          <article id="phase-2" class="journal-entry">
+            <div class="journal-meta">
+              <span class="phase-badge">Phase 02</span>
+              <span class="phase-category">Authentication</span>
+              <span class="badge badge-success" style="width:fit-content;">Delivered</span>
+            </div>
+            <div class="journal-body">
+              <h3>Microsoft Graph Integration & OAuth 2.0 Token Vault</h3>
+
+              <div class="narrative-block">
+                <div class="narrative-label challenge">Systems Constraint</div>
+                <p style="margin-bottom:0;">Basic authentication is deprecated across Microsoft Exchange and Outlook. Storing plain-text credentials introduces unacceptable security vulnerabilities.</p>
               </div>
-            </div>
-          </div>
-        </article>
 
-        <!-- PHASE 02 -->
-        <article id="phase-2" class="journal-entry" data-category="engine">
-          <div class="journal-meta">
-            <span class="phase-badge">Phase 02</span>
-            <span class="phase-category">Authentication</span>
-            <span class="badge badge-success" style="width:fit-content;">Delivered</span>
-          </div>
-          <div class="journal-body">
-            <h3>Microsoft Graph Integration & OAuth 2.0 Token Vault</h3>
+              <div class="narrative-block">
+                <div class="narrative-label solution">Architectural Solution</div>
+                <p style="margin-bottom:0;">Integrated Microsoft Authentication Library (MSAL) utilizing OAuth 2.0 PKCE. Configured encrypted AES-256 token persistence in PostgreSQL with automatic background refresh.</p>
+              </div>
 
-            <div class="narrative-block">
-              <div class="narrative-label challenge">Systems Constraint</div>
-              <p style="margin-bottom:0;">Basic authentication is deprecated across Microsoft Exchange and Outlook. Storing plain-text credentials introduces unacceptable security vulnerabilities.</p>
-            </div>
-
-            <div class="narrative-block">
-              <div class="narrative-label solution">Architectural Solution</div>
-              <p style="margin-bottom:0;">Integrated Microsoft Authentication Library (MSAL) utilizing OAuth 2.0 PKCE. Configured encrypted AES-256 token persistence in PostgreSQL with automatic background refresh.</p>
-            </div>
-
-            <div class="deep-dive-section">
-              <button class="deep-dive-btn" onclick="toggleDrawer(this)">Technical Specifications ▾</button>
-              <div class="deep-dive-drawer">
-                <p style="font-size:0.84rem; color:var(--text-muted);">Key files: <code>src/lib/auth/msal.ts</code>, <code>src/lib/crypto.ts</code>, <code>src/app/api/auth/callback/route.ts</code></p>
-                <pre><code>// MSAL Confident Client Application Initialization
-export const msalClient = new ConfidentialClientApplication({
+              <p style="font-size:0.86rem; color:var(--text-muted); margin-top:1rem;">Confidential client initialization:</p>
+              <pre><code>export const msalClient = new ConfidentialClientApplication({
   auth: {
     clientId: process.env.AZURE_CLIENT_ID!,
     authority: `https://login.microsoftonline.com/common`,
     clientSecret: process.env.AZURE_CLIENT_SECRET,
   },
 });</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+            </div>
+          </article>
+
+          <!-- PHASE 03 -->
+          <article id="phase-3" class="journal-entry">
+            <div class="journal-meta">
+              <span class="phase-badge">Phase 03</span>
+              <span class="phase-category">Data Privacy</span>
+              <span class="badge badge-success" style="width:fit-content;">Delivered</span>
+            </div>
+            <div class="journal-body">
+              <h3>Privacy Sanitization, Demo Leads & Directory Quick Actions</h3>
+
+              <div class="narrative-block">
+                <div class="narrative-label challenge">Systems Constraint</div>
+                <p style="margin-bottom:0;">Real client data had been imported during preliminary tests, posing compliance risks. Testing outreach logic required rich, multi-industry prospect profiles.</p>
               </div>
-            </div>
-          </div>
-        </article>
 
-        <!-- PHASE 03 -->
-        <article id="phase-3" class="journal-entry" data-category="leads">
-          <div class="journal-meta">
-            <span class="phase-badge">Phase 03</span>
-            <span class="phase-category">Data Privacy</span>
-            <span class="badge badge-success" style="width:fit-content;">Delivered</span>
-          </div>
-          <div class="journal-body">
-            <h3>Privacy Sanitization, Demo Leads & Directory Quick Actions</h3>
-
-            <div class="narrative-block">
-              <div class="narrative-label challenge">Systems Constraint</div>
-              <p style="margin-bottom:0;">Real client data had been imported during preliminary tests, posing compliance risks. Testing outreach logic required rich, multi-industry prospect profiles.</p>
-            </div>
-
-            <div class="narrative-block">
-              <div class="narrative-label solution">Architectural Solution</div>
-              <p style="margin-bottom:0;">Purged all real client data. Built an in-app Demo Leads Generator populating 15 enriched personas across 5 verticals with custom attributes. Added 1-click Quick Email and Opt-Out toggles.</p>
-            </div>
-
-            <div class="comparison-grid">
-              <div class="comparison-box">
-                <div class="comparison-title before">Initial State</div>
-                <div>Unsanitized client records; lack of row-level test triggers.</div>
+              <div class="narrative-block">
+                <div class="narrative-label solution">Architectural Solution</div>
+                <p style="margin-bottom:0;">Purged all real client data. Built an in-app Demo Leads Generator populating 15 enriched personas across 5 verticals with custom attributes. Added 1-click Quick Email and Opt-Out toggles.</p>
               </div>
-              <div class="comparison-box">
-                <div class="comparison-title after">Delivered State</div>
-                <div>Sanitized dataset, 15 rich demo profiles, 1-click test send modal, and immediate suppression toggle.</div>
-              </div>
-            </div>
 
-            <div class="deep-dive-section">
-              <button class="deep-dive-btn" onclick="toggleDrawer(this)">Technical Specifications ▾</button>
-              <div class="deep-dive-drawer">
-                <p style="font-size:0.84rem; color:var(--text-muted);">Demo leads include structured metadata for merge tag verification:</p>
-                <pre><code>// src/lib/leads/demo-generator.ts sample attribute shape
-customFields: {
+              <div class="comparison-grid">
+                <div class="comparison-box">
+                  <div class="comparison-title before">Initial State</div>
+                  <div>Unsanitized client records; lack of row-level test triggers.</div>
+                </div>
+                <div class="comparison-box">
+                  <div class="comparison-title after">Delivered State</div>
+                  <div>Sanitized dataset, 15 rich demo profiles, 1-click test send modal, and immediate suppression toggle.</div>
+                </div>
+              </div>
+
+              <p style="font-size:0.86rem; color:var(--text-muted); margin-top:1rem;">Sample demo lead attribute structure:</p>
+              <pre><code>customFields: {
   jobTitle: "VP of Engineering",
   companySize: "100-250",
   budgetTier: "Enterprise",
   techStack: "Next.js, TypeScript, PostgreSQL"
 }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+            </div>
+          </article>
+
+          <!-- PHASE 04 -->
+          <article id="phase-4" class="journal-entry">
+            <div class="journal-meta">
+              <span class="phase-badge">Phase 04</span>
+              <span class="phase-category">Sequence Studio</span>
+              <span class="badge badge-success" style="width:fit-content;">Delivered</span>
+            </div>
+            <div class="journal-body">
+              <h3>Campaign Studio, Spintax Permutations & Cascade Deletion</h3>
+
+              <div class="narrative-block">
+                <div class="narrative-label challenge">Systems Constraint</div>
+                <p style="margin-bottom:0;">Campaign deletion previously caused foreign-key deadlock errors in PostgreSQL. Furthermore, outbound templates with identical content across prospects trigger anti-spam heuristics.</p>
               </div>
-            </div>
-          </div>
-        </article>
 
-        <!-- PHASE 04 -->
-        <article id="phase-4" class="journal-entry" data-category="campaigns">
-          <div class="journal-meta">
-            <span class="phase-badge">Phase 04</span>
-            <span class="phase-category">Sequence Studio</span>
-            <span class="badge badge-success" style="width:fit-content;">Delivered</span>
-          </div>
-          <div class="journal-body">
-            <h3>Campaign Studio, Spintax Permutations & Cascade Deletion</h3>
+              <div class="narrative-block">
+                <div class="narrative-label solution">Architectural Solution</div>
+                <p style="margin-bottom:0;">Resolved relational cascade deletion via atomic transactions. Engineered a recursive Spintax parser supporting nested brackets and fallback merge tags, paired with an interactive Spintax Preview modal.</p>
+              </div>
 
-            <div class="narrative-block">
-              <div class="narrative-label challenge">Systems Constraint</div>
-              <p style="margin-bottom:0;">Campaign deletion previously caused foreign-key deadlock errors in PostgreSQL. Furthermore, outbound templates with identical content across prospects trigger anti-spam heuristics.</p>
-            </div>
-
-            <div class="narrative-block">
-              <div class="narrative-label solution">Architectural Solution</div>
-              <p style="margin-bottom:0;">Resolved relational cascade deletion via atomic transactions. Engineered a recursive Spintax parser supporting nested brackets and fallback merge tags, paired with an interactive Spintax Preview modal.</p>
-            </div>
-
-            <div class="deep-dive-section">
-              <button class="deep-dive-btn" onclick="toggleDrawer(this)">Technical Specifications ▾</button>
-              <div class="deep-dive-drawer">
-                <pre><code>// Recursive Spintax Permutation Engine in src/lib/campaigns/spintax.ts
-export function parseSpintax(text: string): string {
+              <p style="font-size:0.86rem; color:var(--text-muted); margin-top:1rem;">Recursive Spintax permutation engine:</p>
+              <pre><code>export function parseSpintax(text: string): string {
   const pattern = /\{([^{}]+)\}/g;
   while (pattern.test(text)) {
     text = text.replace(pattern, (_, choices) => {
@@ -758,76 +611,64 @@ export function parseSpintax(text: string): string {
   }
   return text;
 }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+            </div>
+          </article>
+
+          <!-- PHASE 05 -->
+          <article id="phase-5" class="journal-entry">
+            <div class="journal-meta">
+              <span class="phase-badge">Phase 05</span>
+              <span class="phase-category">Observability</span>
+              <span class="badge badge-success" style="width:fit-content;">Delivered</span>
+            </div>
+            <div class="journal-body">
+              <h3>Real-Time Dispatched Feed & Email Inspector</h3>
+
+              <div class="narrative-block">
+                <div class="narrative-label challenge">Systems Constraint</div>
+                <p style="margin-bottom:0;">Once a sequence was running, operators had zero visibility into exact rendered content, spintax variations chosen, or delivery failure logs.</p>
+              </div>
+
+              <div class="narrative-block">
+                <div class="narrative-label solution">Architectural Solution</div>
+                <p style="margin-bottom:0;">Created a live Dispatched Activity Feed with status badges, auto-refresh polling, and an Email Detail Inspector modal displaying headers, rendered HTML, and diagnostic logs.</p>
               </div>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <!-- PHASE 05 -->
-        <article id="phase-5" class="journal-entry" data-category="campaigns">
-          <div class="journal-meta">
-            <span class="phase-badge">Phase 05</span>
-            <span class="phase-category">Observability</span>
-            <span class="badge badge-success" style="width:fit-content;">Delivered</span>
-          </div>
-          <div class="journal-body">
-            <h3>Real-Time Dispatched Feed & Email Inspector</h3>
-
-            <div class="narrative-block">
-              <div class="narrative-label challenge">Systems Constraint</div>
-              <p style="margin-bottom:0;">Once a sequence was running, operators had zero visibility into exact rendered content, spintax variations chosen, or delivery failure logs.</p>
+          <!-- PHASE 06 -->
+          <article id="phase-6" class="journal-entry">
+            <div class="journal-meta">
+              <span class="phase-badge">Phase 06</span>
+              <span class="phase-category">Safety Shield</span>
+              <span class="badge badge-danger" style="width:fit-content;">Zero-Accident</span>
             </div>
+            <div class="journal-body">
+              <h3>Multi-Layer Campaign Execution Safety Guardrails</h3>
 
-            <div class="narrative-block">
-              <div class="narrative-label solution">Architectural Solution</div>
-              <p style="margin-bottom:0;">Created a live Dispatched Activity Feed with status badges, auto-refresh polling, and an Email Detail Inspector modal displaying headers, rendered HTML, and diagnostic logs.</p>
-            </div>
-
-            <div class="deep-dive-section">
-              <button class="deep-dive-btn" onclick="toggleDrawer(this)">Technical Specifications ▾</button>
-              <div class="deep-dive-drawer">
-                <p style="font-size:0.84rem; color:var(--text-muted);">Files implemented: <code>src/components/dashboard/RecentActivityFeed.tsx</code>, <code>src/components/emails/EmailDetailModal.tsx</code></p>
+              <div class="narrative-block">
+                <div class="narrative-label challenge">Systems Constraint</div>
+                <p style="margin-bottom:0;">Cold outreach carries existential domain risks: sending outside business hours, exceeding rate limits, emailing unsubscribed contacts, or continuing after mailbox errors.</p>
               </div>
-            </div>
-          </div>
-        </article>
 
-        <!-- PHASE 06 -->
-        <article id="phase-6" class="journal-entry" data-category="safety">
-          <div class="journal-meta">
-            <span class="phase-badge">Phase 06</span>
-            <span class="phase-category">Safety Shield</span>
-            <span class="badge badge-danger" style="width:fit-content;">Zero-Accident</span>
-          </div>
-          <div class="journal-body">
-            <h3>Multi-Layer Campaign Execution Safety Guardrails</h3>
-
-            <div class="narrative-block">
-              <div class="narrative-label challenge">Systems Constraint</div>
-              <p style="margin-bottom:0;">Cold outreach carries existential domain risks: sending outside business hours, exceeding rate limits, emailing unsubscribed contacts, or continuing after mailbox errors.</p>
-            </div>
-
-            <div class="narrative-block">
-              <div class="narrative-label solution">Architectural Solution</div>
-              <p style="margin-bottom:0;">Built a 5-layer safety architecture: 6-stage pre-flight verification modal, dual daily quotas, target timezone business hours window, circuit breaker auto-pause, and a global Emergency Stop kill switch.</p>
-            </div>
-
-            <div class="comparison-grid">
-              <div class="comparison-box">
-                <div class="comparison-title before">Initial State</div>
-                <div>Unchecked activation risked accidental mass dispatches during off-hours or after errors.</div>
+              <div class="narrative-block">
+                <div class="narrative-label solution">Architectural Solution</div>
+                <p style="margin-bottom:0;">Built a 5-layer safety architecture: 6-stage pre-flight verification modal, dual daily quotas, target timezone business hours window, circuit breaker auto-pause, and a global Emergency Stop kill switch.</p>
               </div>
-              <div class="comparison-box">
-                <div class="comparison-title after">Delivered State</div>
-                <div>Mandatory pre-flight audit checklist, daily quotas, business hours filter, circuit breaker, and 1-click kill switch.</div>
-              </div>
-            </div>
 
-            <div class="deep-dive-section">
-              <button class="deep-dive-btn" onclick="toggleDrawer(this)">Technical Specifications ▾</button>
-              <div class="deep-dive-drawer">
-                <pre><code>// Circuit Breaker State Transition in src/lib/worker/dispatcher.ts
-if (consecutiveFailures >= 3) {
+              <div class="comparison-grid">
+                <div class="comparison-box">
+                  <div class="comparison-title before">Initial State</div>
+                  <div>Unchecked activation risked accidental mass dispatches during off-hours or after errors.</div>
+                </div>
+                <div class="comparison-box">
+                  <div class="comparison-title after">Delivered State</div>
+                  <div>Mandatory pre-flight audit checklist, daily quotas, business hours filter, circuit breaker, and 1-click kill switch.</div>
+                </div>
+              </div>
+
+              <p style="font-size:0.86rem; color:var(--text-muted); margin-top:1rem;">Circuit breaker auto-pause execution:</p>
+              <pre><code>if (consecutiveFailures >= 3) {
   await prisma.campaign.update({
     where: { id: campaign.id },
     data: {
@@ -836,248 +677,190 @@ if (consecutiveFailures >= 3) {
     },
   });
 }</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+            </div>
+          </article>
+
+          <!-- PHASE 07 -->
+          <article id="phase-7" class="journal-entry">
+            <div class="journal-meta">
+              <span class="phase-badge">Phase 07</span>
+              <span class="phase-category">Background Engine</span>
+              <span class="badge badge-success" style="width:fit-content;">Delivered</span>
+            </div>
+            <div class="journal-body">
+              <h3>Autonomous Background Worker (BullMQ + Redis)</h3>
+
+              <div class="narrative-block">
+                <div class="narrative-label challenge">Systems Constraint</div>
+                <p style="margin-bottom:0;">Outreach cannot rely on keeping browser tabs open. Execution must proceed continuously as an autonomous daemon with graceful error recovery.</p>
               </div>
-            </div>
-          </div>
-        </article>
 
-        <!-- PHASE 07 -->
-        <article id="phase-7" class="journal-entry" data-category="engine">
-          <div class="journal-meta">
-            <span class="phase-badge">Phase 07</span>
-            <span class="phase-category">Background Engine</span>
-            <span class="badge badge-success" style="width:fit-content;">Delivered</span>
-          </div>
-          <div class="journal-body">
-            <h3>Autonomous Background Worker (BullMQ + Redis)</h3>
+              <div class="narrative-block">
+                <div class="narrative-label solution">Architectural Solution</div>
+                <p style="margin-bottom:0;">Implemented BullMQ v6 on Redis 7 with repeatable job schedulers running every 5 minutes (`dispatch-5min-tick`) and daily quota resets at midnight UTC (`0 0 * * *`). Packaged into a standalone daemon process.</p>
+              </div>
 
-            <div class="narrative-block">
-              <div class="narrative-label challenge">Systems Constraint</div>
-              <p style="margin-bottom:0;">Outreach cannot rely on keeping browser tabs open. Execution must proceed continuously as an autonomous daemon with graceful error recovery.</p>
-            </div>
-
-            <div class="narrative-block">
-              <div class="narrative-label solution">Architectural Solution</div>
-              <p style="margin-bottom:0;">Implemented BullMQ v6 on Redis 7 with repeatable job schedulers running every 5 minutes (`dispatch-5min-tick`) and daily quota resets at midnight UTC (`0 0 * * *`). Packaged into a standalone daemon process.</p>
-            </div>
-
-            <div class="deep-dive-section">
-              <button class="deep-dive-btn" onclick="toggleDrawer(this)">Technical Specifications ▾</button>
-              <div class="deep-dive-drawer">
-                <pre><code>// BullMQ v6 Job Schedulers in src/lib/worker/queue.ts
-await outreachQueue.upsertJobScheduler('dispatch-5min-tick', { every: 300000 });
+              <p style="font-size:0.86rem; color:var(--text-muted); margin-top:1rem;">BullMQ repeatable scheduler registration:</p>
+              <pre><code>await outreachQueue.upsertJobScheduler('dispatch-5min-tick', { every: 300000 });
 await outreachQueue.upsertJobScheduler('midnight-quota-reset', { pattern: '0 0 * * *' });
 
-// Standalone Daemon Script
+// Launch daemon
 npm run worker</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+            </div>
+          </article>
+
+          <!-- PHASE 08 -->
+          <article id="phase-8" class="journal-entry">
+            <div class="journal-meta">
+              <span class="phase-badge">Phase 08</span>
+              <span class="phase-category">Quality Assurance</span>
+              <span class="badge badge-success" style="width:fit-content;">100% Pass</span>
+            </div>
+            <div class="journal-body">
+              <h3>Comprehensive Test Suite & Visual Verification</h3>
+
+              <div class="narrative-block">
+                <div class="narrative-label challenge">Systems Constraint</div>
+                <p style="margin-bottom:0;">Outbound dispatch errors are irreversible. Every edge case—quota ceilings, timezone crossovers, circuit breaker trips—required automated verification.</p>
               </div>
-            </div>
-          </div>
-        </article>
 
-        <!-- PHASE 08 -->
-        <article id="phase-8" class="journal-entry" data-category="testing">
-          <div class="journal-meta">
-            <span class="phase-badge">Phase 08</span>
-            <span class="phase-category">Quality Assurance</span>
-            <span class="badge badge-success" style="width:fit-content;">100% Pass</span>
-          </div>
-          <div class="journal-body">
-            <h3>Comprehensive Test Suite & Visual Verification</h3>
+              <div class="narrative-block">
+                <div class="narrative-label solution">Architectural Solution</div>
+                <p style="margin-bottom:0;">Wrote 37 unit and integration tests across safety guardrails and BullMQ worker queues. Ran 21 Playwright visual checkpoints covering all pages and modal states.</p>
+              </div>
 
-            <div class="narrative-block">
-              <div class="narrative-label challenge">Systems Constraint</div>
-              <p style="margin-bottom:0;">Outbound dispatch errors are irreversible. Every edge case—quota ceilings, timezone crossovers, circuit breaker trips—required automated verification.</p>
-            </div>
-
-            <div class="narrative-block">
-              <div class="narrative-label solution">Architectural Solution</div>
-              <p style="margin-bottom:0;">Wrote 37 unit and integration tests across safety guardrails and BullMQ worker queues. Ran 21 Playwright visual checkpoints covering all pages and modal states.</p>
-            </div>
-
-            <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1rem; margin:1rem 0;">
-              <div style="display:grid; grid-template-columns:repeat(3, 1fr); text-align:center; gap:1rem;">
-                <div>
-                  <div style="font-size:1.5rem; font-weight:800; color:var(--success);">27 / 27</div>
-                  <div style="font-size:0.75rem; color:var(--text-faint);">Safety Tests</div>
-                </div>
-                <div>
-                  <div style="font-size:1.5rem; font-weight:800; color:var(--primary);">10 / 10</div>
-                  <div style="font-size:0.75rem; color:var(--text-faint);">BullMQ Tests</div>
-                </div>
-                <div>
-                  <div style="font-size:1.5rem; font-weight:800; color:var(--warning);">21 / 21</div>
-                  <div style="font-size:0.75rem; color:var(--text-faint);">Playwright Checks</div>
+              <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.1rem; margin:1rem 0;">
+                <div style="display:grid; grid-template-columns:repeat(3, 1fr); text-align:center; gap:1rem;">
+                  <div>
+                    <div style="font-size:1.6rem; font-weight:800; color:var(--success);">27 / 27</div>
+                    <div style="font-size:0.75rem; color:var(--text-faint);">Safety Tests</div>
+                  </div>
+                  <div>
+                    <div style="font-size:1.6rem; font-weight:800; color:var(--primary);">10 / 10</div>
+                    <div style="font-size:0.75rem; color:var(--text-faint);">BullMQ Tests</div>
+                  </div>
+                  <div>
+                    <div style="font-size:1.6rem; font-weight:800; color:var(--warning);">21 / 21</div>
+                    <div style="font-size:0.75rem; color:var(--text-faint);">Playwright Checks</div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div class="deep-dive-section">
-              <button class="deep-dive-btn" onclick="toggleDrawer(this)">Technical Specifications ▾</button>
-              <div class="deep-dive-drawer">
-                <pre><code>npx tsx --env-file=.env scripts/test-safety-guardrails.ts
+              <p style="font-size:0.86rem; color:var(--text-muted); margin-top:1rem;">Test runner execution:</p>
+              <pre><code>npx tsx --env-file=.env scripts/test-safety-guardrails.ts
 npx tsx --env-file=.env scripts/test-bullmq-worker.ts
 node scripts/playwright-test.mjs</code><button class="copy-btn" onclick="copyCode(this)">Copy</button></pre>
+            </div>
+          </article>
+
+          <!-- PHASE 09 -->
+          <article id="phase-9" class="journal-entry">
+            <div class="journal-meta">
+              <span class="phase-badge">Phase 09</span>
+              <span class="phase-category">Release</span>
+              <span class="badge badge-success" style="width:fit-content;">Published</span>
+            </div>
+            <div class="journal-body">
+              <h3>Branch Publication & Interactive Documentation</h3>
+
+              <div class="narrative-block">
+                <div class="narrative-label solution">Architectural Solution</div>
+                <p style="margin-bottom:0;">Committed and published branch <code>devFlorian</code> to GitHub. Delivered this standalone, accessible documentation dashboard with zero AI design anti-patterns.</p>
               </div>
+
+              <p style="font-size:0.86rem; color:var(--text-muted); margin-top:1rem;">Repository URL:</p>
+              <pre><code>https://github.com/SHIROxcx/Emailoutreachwebapp/tree/devFlorian</code></pre>
             </div>
-          </div>
-        </article>
+          </article>
 
-        <!-- PHASE 09 -->
-        <article id="phase-9" class="journal-entry" data-category="engine">
-          <div class="journal-meta">
-            <span class="phase-badge">Phase 09</span>
-            <span class="phase-category">Release</span>
-            <span class="badge badge-success" style="width:fit-content;">Published</span>
-          </div>
-          <div class="journal-body">
-            <h3>Branch Publication & Interactive Documentation</h3>
-
-            <div class="narrative-block">
-              <div class="narrative-label solution">Architectural Solution</div>
-              <p style="margin-bottom:0;">Committed and published branch <code>devFlorian</code> to GitHub. Delivered this standalone, accessible documentation dashboard with zero AI design anti-patterns.</p>
-            </div>
-
-            <div class="deep-dive-section">
-              <button class="deep-dive-btn" onclick="toggleDrawer(this)">Technical Specifications ▾</button>
-              <div class="deep-dive-drawer">
-                <p style="font-size:0.84rem; color:var(--text-muted);">Repository URL: <a href="https://github.com/SHIROxcx/Emailoutreachwebapp/tree/devFlorian" target="_blank">github.com/SHIROxcx/Emailoutreachwebapp (branch devFlorian)</a></p>
-              </div>
-            </div>
-          </div>
-        </article>
-
-      </div>
-    </section>
-
-    <!-- Quick Start Guide -->
-    <section id="quickstart" style="margin-top: 4rem;">
-      <h2>Quick Start Guide</h2>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1rem;">
-        <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.25rem;">
-          <div style="font-weight:700; color:var(--text-title); font-size:0.9rem; margin-bottom:0.35rem;">1. Infrastructure</div>
-          <p style="font-size:0.84rem; color:var(--text-muted);">Start PostgreSQL and Redis:</p>
-          <pre style="margin-bottom:0;"><code>docker start outreach-postgres outreach-redis</code></pre>
         </div>
-        <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.25rem;">
-          <div style="font-weight:700; color:var(--text-title); font-size:0.9rem; margin-bottom:0.35rem;">2. Web Server</div>
-          <p style="font-size:0.84rem; color:var(--text-muted);">Run Next.js dev server:</p>
-          <pre style="margin-bottom:0;"><code>npm run dev</code></pre>
+      </section>
+
+      <!-- Quick Start Guide -->
+      <section id="quickstart" style="margin-top: 4rem;">
+        <h2>Quick Start Guide</h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:1rem;">
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.25rem;">
+            <div style="font-weight:700; color:var(--text-title); font-size:0.92rem; margin-bottom:0.35rem;">1. Infrastructure</div>
+            <p style="font-size:0.86rem; color:var(--text-muted);">Start PostgreSQL and Redis:</p>
+            <pre style="margin-bottom:0;"><code>docker start outreach-postgres outreach-redis</code></pre>
+          </div>
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.25rem;">
+            <div style="font-weight:700; color:var(--text-title); font-size:0.92rem; margin-bottom:0.35rem;">2. Web Server</div>
+            <p style="font-size:0.86rem; color:var(--text-muted);">Run Next.js dev server:</p>
+            <pre style="margin-bottom:0;"><code>npm run dev</code></pre>
+          </div>
+          <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.25rem;">
+            <div style="font-weight:700; color:var(--text-title); font-size:0.92rem; margin-bottom:0.35rem;">3. Background Daemon</div>
+            <p style="font-size:0.86rem; color:var(--text-muted);">Start BullMQ worker:</p>
+            <pre style="margin-bottom:0;"><code>npm run worker</code></pre>
+          </div>
         </div>
-        <div style="background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:1.25rem;">
-          <div style="font-weight:700; color:var(--text-title); font-size:0.9rem; margin-bottom:0.35rem;">3. Background Daemon</div>
-          <p style="font-size:0.84rem; color:var(--text-muted);">Start BullMQ worker:</p>
-          <pre style="margin-bottom:0;"><code>npm run worker</code></pre>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- API Reference -->
-    <section id="api" style="margin-top: 4rem;">
-      <h2>REST API Reference</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Method</th>
-            <th>Endpoint</th>
-            <th>Description</th>
-            <th>Enforced Guardrails</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><code>GET</code></td>
-            <td><code>/api/campaigns/[id]/audit</code></td>
-            <td>Pre-flight checklist evaluation</td>
-            <td>Mailbox, Sequence, Quota, Window, Syntax</td>
-          </tr>
-          <tr>
-            <td><code>POST</code></td>
-            <td><code>/api/campaigns/emergency-stop</code></td>
-            <td>1-click global emergency kill switch</td>
-            <td>Pauses all active campaigns & enrollments</td>
-          </tr>
-          <tr>
-            <td><code>POST</code></td>
-            <td><code>/api/campaigns/toggle-status</code></td>
-            <td>Activate or pause campaign</td>
-            <td>Requires pre-flight audit clearance</td>
-          </tr>
-          <tr>
-            <td><code>POST</code></td>
-            <td><code>/api/worker/run</code></td>
-            <td>Manual dispatch sweep trigger</td>
-            <td>Evaluates quotas, windows, circuit breaker</td>
-          </tr>
-          <tr>
-            <td><code>POST</code></td>
-            <td><code>/api/leads/demo</code></td>
-            <td>Populate 15 realistic prospects</td>
-            <td>Sanitized mock data with custom metadata</td>
-          </tr>
-          <tr>
-            <td><code>DELETE</code></td>
-            <td><code>/api/campaigns/[id]</code></td>
-            <td>Safe cascade deletion</td>
-            <td>Transactional cleanup of leads, steps & logs</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+      <!-- API Reference -->
+      <section id="api" style="margin-top: 4rem;">
+        <h2>REST API Reference</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th>Endpoint</th>
+              <th>Description</th>
+              <th>Enforced Guardrails</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>GET</code></td>
+              <td><code>/api/campaigns/[id]/audit</code></td>
+              <td>Pre-flight checklist evaluation</td>
+              <td>Mailbox, Sequence, Quota, Window, Syntax</td>
+            </tr>
+            <tr>
+              <td><code>POST</code></td>
+              <td><code>/api/campaigns/emergency-stop</code></td>
+              <td>1-click global emergency kill switch</td>
+              <td>Pauses all active campaigns & enrollments</td>
+            </tr>
+            <tr>
+              <td><code>POST</code></td>
+              <td><code>/api/campaigns/toggle-status</code></td>
+              <td>Activate or pause campaign</td>
+              <td>Requires pre-flight audit clearance</td>
+            </tr>
+            <tr>
+              <td><code>POST</code></td>
+              <td><code>/api/worker/run</code></td>
+              <td>Manual dispatch sweep trigger</td>
+              <td>Evaluates quotas, windows, circuit breaker</td>
+            </tr>
+            <tr>
+              <td><code>POST</code></td>
+              <td><code>/api/leads/demo</code></td>
+              <td>Populate 15 realistic prospects</td>
+              <td>Sanitized mock data with custom metadata</td>
+            </tr>
+            <tr>
+              <td><code>DELETE</code></td>
+              <td><code>/api/campaigns/[id]</code></td>
+              <td>Safe cascade deletion</td>
+              <td>Transactional cleanup of leads, steps & logs</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
 
-    <!-- Footer Colophon -->
-    <footer style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-faint); font-size: 0.82rem; text-align: center;">
-      Outlook Outreach Scheduler — Lead Engineer: Florian — Published to branch <code>devFlorian</code>.
-    </footer>
+      <!-- Footer Colophon -->
+      <footer style="margin-top: 5rem; padding-top: 2rem; border-top: 1px solid var(--border); color: var(--text-faint); font-size: 0.84rem; text-align: center;">
+        Outlook Outreach Scheduler — Lead Engineer: Florian — Published to branch <code>devFlorian</code>.
+      </footer>
 
+    </div>
   </main>
 </div>
 
 <script>
-  function setMode(mode) {
-    const body = document.body;
-    const btnSimple = document.getElementById('btn-mode-simple');
-    const btnTech = document.getElementById('btn-mode-tech');
-
-    if (mode === 'simple') {
-      body.classList.remove('mode-tech');
-      body.classList.add('mode-simple');
-      btnSimple.classList.add('active');
-      btnTech.classList.remove('active');
-    } else {
-      body.classList.remove('mode-simple');
-      body.classList.add('mode-tech');
-      btnTech.classList.add('active');
-      btnSimple.classList.remove('active');
-    }
-  }
-
-  function toggleDrawer(button) {
-    const content = button.nextElementSibling;
-    if (content.classList.contains('force-open')) {
-      content.classList.remove('force-open');
-      button.textContent = 'Technical Specifications ▾';
-    } else {
-      content.classList.add('force-open');
-      button.textContent = 'Hide Specifications ▴';
-    }
-  }
-
-  function filterTimeline(category) {
-    const btns = document.querySelectorAll('.filter-btn');
-    btns.forEach(b => b.classList.remove('active'));
-    event.target.classList.add('active');
-
-    const entries = document.querySelectorAll('.journal-entry');
-    entries.forEach(entry => {
-      if (category === 'all' || entry.getAttribute('data-category') === category) {
-        entry.classList.remove('hidden');
-      } else {
-        entry.classList.add('hidden');
-      }
-    });
-  }
-
   function copyCode(btn) {
     const pre = btn.parentElement;
     const code = pre.querySelector('code').innerText;
