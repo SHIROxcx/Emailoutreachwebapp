@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { HomeClient } from "@/components/HomeClient";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,11 @@ export default async function Home({ searchParams }: HomePageProps) {
   const authError = params.auth_error;
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-zinc-50 px-6 dark:bg-black">
+    <HomeClient
+      connected={connected}
+      mailbox={params.mailbox}
+      authError={authError}
+    >
       <main className="flex w-full max-w-xl flex-col gap-8 rounded-2xl border border-zinc-200 bg-white p-10 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
         <div>
           <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
@@ -69,6 +74,6 @@ export default async function Home({ searchParams }: HomePageProps) {
           ) : null}
         </div>
       </main>
-    </div>
+    </HomeClient>
   );
 }
